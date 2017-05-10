@@ -1,8 +1,11 @@
 ## Synopsis
 
 # 2017Algorithm_Final_Project
+
 *At the top of the file there should be a short introduction and/ or overview that explains **what** the project is. This description should match descriptions added for package managers (Gemspec, package.json, etc.)*
+
 NTUEE Algorithm 2017 Final Project
+
 ICCAD 2015 Contest - Color Balancing for Double Patterning
 
 ## Code Example
@@ -16,6 +19,7 @@ ICCAD 2015 Contest - Color Balancing for Double Patterning
 ## Installation
 
 '''
+
 git clone https://github.com/amjltc295/2017Algorithm_Final_Project.git directory_name
 cd directory_name
 make
