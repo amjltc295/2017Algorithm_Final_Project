@@ -19,12 +19,12 @@ ICCAD 2015 Contest - Color Balancing for Double Patterning
 ## Installation
 
 '''
-
 git clone https://github.com/amjltc295/2017Algorithm_Final_Project.git directory_name
 cd directory_name
 make
 ./DPT_balance_color ($input_file_name) ($input_file_name).out
 '''
+
 *Provide code examples and explanations of how to get the project.*
 
 ## API Reference
@@ -36,7 +36,9 @@ make
 *Describe and show how to run the tests with code examples.*
 
 ## Contributors
+
 Ya-Liang Chang
+
 *Let people know how they can dive into the project, include important links to things like issue trackers, irc, twitter accounts if applicable.*
 
 ## License
