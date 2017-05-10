@@ -140,7 +140,7 @@ void Graph::printGraph()
     for ( it = nodesMap.begin() ; it != nodesMap.end() ; it++ )
     {
         Node *node = (*it).second;
-    	cout << node->x[0] << ',' << node->y[0] << ',' << node->x[1] << ',' << node->y[1] << endl;
+    	cout << "x1=" << node->x[0] << ',' << "y1=" << node->y[0] << ',' << "x2=" << node->x[1] << ',' <<"y2=" << node->y[1] << endl;
     }
 
 }
