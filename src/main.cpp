@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
 
     char buffer[200];
     fstream fin(argv[1]);
-    fstream fout;
+    // fstream fout;
     //fout.open(argv[3],ios::out);
     
     //Read alpha, beta, omega from the first three lines
@@ -80,7 +80,8 @@ int main(int argc, char* argv[])
     }
     //cout << x0 << ',' << y0 << ',' << x1 << ',' << y1 << endl;
     graphPtr->printGraph();
-        
+    Build_Color_Graph(graphPtr);
+    Output_Graph(graphPtr,argv[2]);
         
 
     /*

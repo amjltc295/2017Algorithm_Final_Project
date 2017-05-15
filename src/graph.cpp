@@ -214,3 +214,65 @@ Node * Graph::getNodeById(const int& id)
     return nodesMap[id];
 }
 
+void Build_Color_Graph(Graph *graph)
+{
+    graph->sortNodesByID();
+    for(int i=0;i<graph->nodes.size();i++)
+    {
+        for(int j=i+1;j<graph->nodes.size();j++)
+        {
+            int ax1=graph->nodes[i]->x[0];
+            int ax2=graph->nodes[i]->x[1];
+            int ay1=graph->nodes[i]->y[0];
+            int ay2=graph->nodes[i]->y[1];
+            int bx1=graph->nodes[j]->x[0];
+            int bx2=graph->nodes[j]->x[1];
+            int by1=graph->nodes[j]->y[0];
+            int by2=graph->nodes[j]->y[1];
+            int alpha=graph->alpha;
+            int beta=graph->beta;
+            if( ( bx1<ax1 && bx2>ax1 ) || ( bx2>ax2 && bx1<ax2) || ( bx1>ax1 && bx2<ax2 ))
+            {
+                if( ( by2 < ay1 && by2 > (ay1-beta) ) || ( by1 > ay2 && by1 < (ay2+beta) ) )
+                {
+                    graph->addEdge(i,j,1);
+                }
+            }
+            if( ( by1<ay1 && by2>ay1 ) || ( by2>ay2 && by1<ay2) || ( by1>ay1 && by2<ay2 ))
+            {
+                if( ( bx2 < ax1 && bx2 > (ax1-alpha) ) || ( bx1 > ax2 && bx1 < (ax2+alpha) ) )
+                {
+                    graph->addEdge(i,j,1);
+                }
+            }
+        }
+    }
+    cout<<"there are"<<graph->edges.size()<<"edges\n";
+}
+
+void Output_Graph(Graph * graph,char * filepath)
+{
+    fstream fout;
+    fout.open(filepath,ios::out);//open output file
+    fout<<"// SCC from specific input"<<endl;
+    fout<<"graph {"<<endl;
+    vector<int> outputed;
+    for(int i=0;i<graph->nodes.size();i++)
+    {
+        outputed.push_back(0);
+    }
+    for(int i=0;i<graph->edges.size();i++)
+    {
+        fout<<"v"<<graph->edges[i]->node[0]->id<<" -- v"<<graph->edges[i]->node[1]->id<<";"<<endl;
+        outputed[graph->edges[i]->node[0]->id]=1;
+        outputed[graph->edges[i]->node[1]->id]=1;
+    }
+    for(int i=0;i<graph->nodes.size();i++)
+    {
+        if(outputed[i]==0)
+        {
+            fout<<"v"<<i<<";"<<endl;
+        }
+    }
+    fout<<"}";
+}

@@ -37,7 +37,7 @@ class Node{
 
         int id;
         int x[2]; // x0 is the smaller one
-	int y[2];
+        int y[2];
         int color;
         bool traveled;
         vector<Edge *> edge;
@@ -70,5 +70,8 @@ class Graph{
         int beta;
         int omega;
 };
+
+void Build_Color_Graph(Graph *);
+void Output_Graph(Graph *,char * filepath);
 
 #endif
