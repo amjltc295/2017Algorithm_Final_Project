@@ -284,9 +284,36 @@ void Color_Graph(Graph *graph)
 
 void DFS(Graph *graph)
 {
+    graph->init();
+    int time = 0;
     std::map<int, Node *>::iterator itN;
     for (itN = graph->nodesMap.begin(); itN != graph->nodesMap.begin(); ++itN)
     {
-        
+        Node *node = (*itN).second();
+        if (node->color == WHITE)
+        {
+            DFS_visit(graph, node, time);
+        }
     }
+}
+
+void DFS_visit(Graph *graph, Node *u, int &time)
+{
+    time = time + 1;
+    u->d = time;
+    u.color = GRAY;
+    std::vector<Node *>::iterator itE;
+    for (itE = u->edge.begin(); itE != u->edge.end(); ++itE)
+    {
+        Node *v = (*itE).second()
+        if (v->color == WHITE)
+        {
+            v.pi = u;
+            DFS_visit(graph, v, time);
+        }
+    }
+
+    u->color = BLACK;
+    time = time + 1;
+    u.f = time;
 }
