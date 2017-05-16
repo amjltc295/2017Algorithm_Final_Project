@@ -8,6 +8,35 @@ NTUEE Algorithm 2017 Final Project
 
 ICCAD 2015 Contest - Color Balancing for Double Patterning
 
+## Algorithm
+
+```
+Read file
+
+Add edges on the nodes (for x, y distance between nodes < alpha, beta) in Graph 
+
+Do DFS on Graph
+    Build Graph.wholeSubGraphMap. (Find the nodes connected by edge, create)
+    Find the conflict. (Find whether the subraphs is 2-colorable)
+    Find the bondage of color bounding box. (don't care about the conflict subgraphs)
+
+Create windowsMap in Graph
+
+For each SubGraph in Graph.wholeSubGraphMap
+    Find windows which it belongs to
+    Put each SubGraph into Window.subGraphMap
+
+For each window in windowsMap
+    For each subgraph in window.subGraphInWindow
+        Do DFS find color difference of each SubGraph (subgraph.color_diff)
+            Check if colored
+    Sum colored nodesSet
+    Do Greedy to balance (find minimum color differece, exclude colored nodes)
+    
+
+
+```
+
 ## Code Example
 
 ~~Show what the library does as concisely as possible, developers should be able to figure out **how** your project solves their problem by looking at the code example. Make sure the API you are showing off is obvious, and that your code is short and concise.~~
