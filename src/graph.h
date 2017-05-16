@@ -38,8 +38,16 @@ class Node{
         int id;
         int x[2]; // x0 is the smaller one
         int y[2];
-        int color;
-        bool traveled;
+        Color color;
+
+        enum Color
+        {
+            WHITE,
+            GREY,
+            BLACK
+        };
+
+        bool colored; // if colored == true, skip balancing step.
         vector<Edge *> edge;
 
         int d;
@@ -63,13 +71,47 @@ class Graph{
         void init();
         Node * getNodeById(const int& id);
 
+        // graph travel
+        void DFS();
+        void DFS_visit();
+
+        // colorBoundBox[0] = x_left, [1] = x_right, [2] = y_up, [3] = y_down;
+        int colorBoundBox[4];
         map<int, Node *> nodesMap;
+        map<int, Window *> windowsMap;
         vector<Node *> nodes;
         vector<Edge *> edges;
         int alpha;
         int beta;
         int omega;
 };
+
+
+// as the sliding window. The whole ckt layout would be divided into many small windows.
+// in this project, we balancing only the vertices in each window.
+// i.e. the balance btw Window is not concerned.
+class Window
+{
+public:
+    Window();
+    ~Window();
+
+    int index;
+    int left_x, right_x;
+    int left_y, right_y;
+    std::map<int, SubGraph *> subgraph_set; // contain all the subgraph in one window.
+};
+
+class SubGraph
+{
+public:
+    SubGraph();
+    ~SubGraph();
+    
+    int color_diff;
+    std::vector<Node *> subgraph;
+};
+
 
 void Build_Color_Graph(Graph *);
 void Output_Graph(Graph *,char * filepath);

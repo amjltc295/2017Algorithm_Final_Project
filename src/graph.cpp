@@ -42,8 +42,9 @@ Node::Node(const int& i, const int& x0, const int& y0, const int& x1, const int&
     y[0] = y0;
     x[1] = x1;
     y[1] = y1;
-    traveled = false;
-    color = -1;
+    valid = false; // valid = 1 means this subgraph is colorable
+    color = WHITE;
+    2color = false; // 2color = true --> red; else --> black;
     d = DIS_INF;
     prev = 0;
 }
@@ -204,7 +205,8 @@ void Graph::init()
         node->traveled = false;
         node->d = DIS_INF;
         node->prev = 0;
-        node->color = -1;
+        node->color = WHITE;
+        node->2color = false;
     }
     
 }
@@ -277,17 +279,12 @@ void Output_Graph(Graph * graph,char * filepath)
     fout<<"}";
 }
 
-void Color_Graph(Graph *graph)
+void Graph::DFS()
 {
-
-}
-
-void DFS(Graph *graph)
-{
-    graph->init();
+    Graph::init();
     int time = 0;
     std::map<int, Node *>::iterator itN;
-    for (itN = graph->nodesMap.begin(); itN != graph->nodesMap.begin(); ++itN)
+    for (itN = nodesMap.begin(); itN != nodesMap.begin(); ++itN)
     {
         Node *node = (*itN).second();
         if (node->color == WHITE)
@@ -297,7 +294,7 @@ void DFS(Graph *graph)
     }
 }
 
-void DFS_visit(Graph *graph, Node *u, int &time)
+void Graph::DFS_visit(Node *u, int &time)
 {
     time = time + 1;
     u->d = time;
@@ -310,7 +307,7 @@ void DFS_visit(Graph *graph, Node *u, int &time)
         {
             v.pi = u;
             DFS_visit(graph, v, time);
-        }
+        } else if (v->color == BLACK)
     }
 
     u->color = BLACK;
