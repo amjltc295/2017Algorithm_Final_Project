@@ -231,14 +231,14 @@ void Build_Color_Graph(Graph *graph)
             int by2=graph->nodes[j]->y[1];
             int alpha=graph->alpha;
             int beta=graph->beta;
-            if( ( bx1<ax1 && bx2>ax1 ) || ( bx2>ax2 && bx1<ax2) || ( bx1>ax1 && bx2<ax2 ))
+            if( ( bx1<=ax1 && bx2>ax1 ) || ( bx2>=ax2 && bx1<ax2) || ( bx1>=ax1 && bx2<=ax2 ))
             {
                 if( ( by2 < ay1 && by2 > (ay1-beta) ) || ( by1 > ay2 && by1 < (ay2+beta) ) )
                 {
                     graph->addEdge(i,j,1);
                 }
             }
-            if( ( by1<ay1 && by2>ay1 ) || ( by2>ay2 && by1<ay2) || ( by1>ay1 && by2<ay2 ))
+            if( ( by1<=ay1 && by2>ay1 ) || ( by2>=ay2 && by1<ay2) || ( by1>=ay1 && by2<=ay2 ))
             {
                 if( ( bx2 < ax1 && bx2 > (ax1-alpha) ) || ( bx1 > ax2 && bx1 < (ax2+alpha) ) )
                 {
