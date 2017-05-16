@@ -93,7 +93,7 @@ Graph::~Graph()
         (*itN2) = 0;
     }*/
 }
-        
+
 void Graph::addNode(const int& i, const int& x0, const int& y0, const int& x1, const int& y1)
 {
     Node *node;
@@ -275,4 +275,18 @@ void Output_Graph(Graph * graph,char * filepath)
         }
     }
     fout<<"}";
+}
+
+void Color_Graph(Graph *graph)
+{
+
+}
+
+void DFS(Graph *graph)
+{
+    std::map<int, Node *>::iterator itN;
+    for (itN = graph->nodesMap.begin(); itN != graph->nodesMap.begin(); ++itN)
+    {
+        
+    }
 }
