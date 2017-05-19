@@ -100,7 +100,7 @@ class Graph{
 
         // graph travel
         void DFS();
-        bool DFS_visit(Node *u);
+        bool DFS_visit(Node *u, PaintColor paintThisWith);
 
         // colorBoundBox[0] = x_left, [1] = x_right, [2] = y_up, [3] = y_down;
         int colorBoundBox[4];

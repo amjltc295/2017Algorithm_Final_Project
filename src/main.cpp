@@ -102,6 +102,9 @@ int main(int argc, char* argv[])
     //////////// find the solution to pick up the food ////
     tmusg.periodStart();
 
+    // test only
+    cout << "Painting conflict detection with DFS....." << endl;
+    // test only
     graphPtr->DFS();
     graphPtr->printGraph();
 
