@@ -42,9 +42,10 @@ Node::Node(const int& i, const int& x0, const int& y0, const int& x1, const int&
     y[0] = y0;
     x[1] = x1;
     y[1] = y1;
-    valid = false; // valid = 1 means this subgraph is colorable
+    paintConflict = false; // valid = 1 means this subgraph is colorable
     color = WHITE;
-    2color = false; // 2color = true --> red; else --> black;
+    paintColor = NON_PAINTED;
+    colored = false; // colored == 1 --> be colored yet
     d = DIS_INF;
     prev = 0;
 }
@@ -142,6 +143,7 @@ void Graph::printGraph()
     {
         Node *node = (*it).second;
     	cout << "x1=" << node->x[0] << ',' << "y1=" << node->y[0] << ',' << "x2=" << node->x[1] << ',' <<"y2=" << node->y[1] << endl;
+        cout << "paintConflict = " << node->paintConflict << endl << endl;
     }
 
 }
@@ -202,11 +204,12 @@ void Graph::init()
     for ( itN = nodesMap.begin() ; itN != nodesMap.end() ; itN++ )
     {
         Node *node = (*itN).second;
-        node->traveled = false;
         node->d = DIS_INF;
         node->prev = 0;
         node->color = WHITE;
-        node->2color = false;
+        node->colored = false;
+        node->paintColor = NON_PAINTED;
+        node->paintConflict = false;
     }
     
 }
@@ -279,38 +282,59 @@ void Output_Graph(Graph * graph,char * filepath)
     fout<<"}";
 }
 
+//////////////////////////////////////////////////////////////
+//// user defined ////////////////////////////////////////////
 void Graph::DFS()
 {
     Graph::init();
-    int time = 0;
+    // int time = 0;
     std::map<int, Node *>::iterator itN;
     for (itN = nodesMap.begin(); itN != nodesMap.begin(); ++itN)
     {
-        Node *node = (*itN).second();
+        Node *node = (*itN).second;
         if (node->color == WHITE)
         {
-            DFS_visit(graph, node, time);
+            // DFS_visit(graph, node, time);
+            if (~DFS_visit(node))
+                node->paintConflict = true;
         }
     }
 }
 
-void Graph::DFS_visit(Node *u, int &time)
+// bool Graph::DFS_visit(Node *u, int &time)
+// return false if paint conflict
+bool Graph::DFS_visit(Node *u)
 {
-    time = time + 1;
-    u->d = time;
-    u.color = GRAY;
-    std::vector<Node *>::iterator itE;
+    // time = time + 1;
+    // u->d = time;
+    u->color = GRAY;
+    PaintColor adjColor = NON_PAINTED;
+    vector<Edge *>::iterator itE;
     for (itE = u->edge.begin(); itE != u->edge.end(); ++itE)
     {
-        Node *v = (*itE).second()
+        Node *v = (*itE)->getNeighbor(u);
         if (v->color == WHITE)
         {
-            v.pi = u;
-            DFS_visit(graph, v, time);
-        } else if (v->color == BLACK)
+            v->prev = u;
+            if (~DFS_visit(v)) {
+                u->paintConflict = true;
+                return false;
+            }
+        } else if (v->color == BLACK) {
+            if (adjColor == NON_PAINTED) {
+                adjColor = v->paintColor;
+            } else {
+                if (adjColor == v->paintColor) {
+                    u->paintConflict = true;
+                    return false;
+                }
+            }
+        }
     }
 
     u->color = BLACK;
-    time = time + 1;
-    u.f = time;
+    u->paintColor = (adjColor == NON_PAINTED || adjColor == RED)? GREEN : RED;
+    // time = time + 1;
+    // u.f = time;
+    return true;
 }

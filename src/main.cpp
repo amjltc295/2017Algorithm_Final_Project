@@ -102,6 +102,9 @@ int main(int argc, char* argv[])
     //////////// find the solution to pick up the food ////
     tmusg.periodStart();
 
+    graphPtr->DFS();
+    graphPtr->printGraph();
+
     //do color balancing
 
     tmusg.getPeriodUsage(stat);

@@ -27,6 +27,10 @@ class Edge{
 
 };
 
+// enumeration declartion
+enum Color { WHITE, GRAY, BLACK };
+enum PaintColor { NON_PAINTED, RED, GREEN };
+
 class Node{
 
     public:
@@ -38,22 +42,45 @@ class Node{
         int id;
         int x[2]; // x0 is the smaller one
         int y[2];
-        Color color;
 
-        enum Color
-        {
-            WHITE,
-            GREY,
-            BLACK
-        };
+        Color color; // for DFS usage, check out enum Color above
+        PaintColor paintColor; // for color balancing, check out enum PaintColor above
 
         bool colored; // if colored == true, skip balancing step.
+        bool paintConflict; // paintConflict == true --> the subgraph cannot be paint with two color.
         vector<Edge *> edge;
 
         int d;
         Node *prev;
         int heap_idx;
 };
+
+
+class SubGraph
+{
+public:
+    SubGraph();
+    ~SubGraph();
+    
+    int colorDiff;
+    std::vector<Node *> subGraph;
+};
+
+// as the sliding window. The whole ckt layout would be divided into many small windows.
+// in this project, we balancing only the vertices in each window.
+// i.e. the balance btw Window is not concerned.
+class Window
+{
+public:
+    Window();
+    ~Window();
+
+    int index;
+    int leftX, rightX;
+    int leftY, rightY;
+    std::map<int, SubGraph *> subGraphSet; // contain all the subgraph in one window.
+};
+
 
 class Graph{
 
@@ -73,43 +100,18 @@ class Graph{
 
         // graph travel
         void DFS();
-        void DFS_visit();
+        bool DFS_visit(Node *u);
 
         // colorBoundBox[0] = x_left, [1] = x_right, [2] = y_up, [3] = y_down;
         int colorBoundBox[4];
         map<int, Node *> nodesMap;
+        std::map<int, SubGraph *> wholeSubGraphMap;
         map<int, Window *> windowsMap;
         vector<Node *> nodes;
         vector<Edge *> edges;
         int alpha;
         int beta;
         int omega;
-};
-
-
-// as the sliding window. The whole ckt layout would be divided into many small windows.
-// in this project, we balancing only the vertices in each window.
-// i.e. the balance btw Window is not concerned.
-class Window
-{
-public:
-    Window();
-    ~Window();
-
-    int index;
-    int left_x, right_x;
-    int left_y, right_y;
-    std::map<int, SubGraph *> subgraph_set; // contain all the subgraph in one window.
-};
-
-class SubGraph
-{
-public:
-    SubGraph();
-    ~SubGraph();
-    
-    int color_diff;
-    std::vector<Node *> subgraph;
 };
 
 
