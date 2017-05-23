@@ -286,30 +286,16 @@ void Output_Graph(Graph * graph,char * filepath)
 //// user defined ////////////////////////////////////////////
 void Graph::DFS()
 {
-    // test only
-    cout << "Graph::DFS()..........." << endl;
-    // test only
 
     Graph::init();
-    // int time = 0;
     map<int, Node *>::iterator itN;
     for (itN = nodesMap.begin(); itN != nodesMap.end(); ++itN)
     {
         Node *node = (*itN).second;
-        // test only
-        cout << "Graph::DFS(): node = " << node->id << endl;
-        cout << "Graph::DFS(): node.color = " << node->color << endl;
-        // test only
-        if (node->color == WHITE)
-        {
-            // test only
-            cout << "Graph::DFS(): node = " << node->id << endl;
-            // test only
-
-            // DFS_visit(graph, node, time);
-            node->paintColor = RED;
-            if (~DFS_visit(node, GREEN))
+        if (node->color == WHITE) {
+            if (DFS_visit(node, RED) == false) {
                 node->paintConflict = true;
+            }
         }
     }
 }
@@ -319,51 +305,30 @@ void Graph::DFS()
 // we pass the color for next node in DFS using paintThisWith
 bool Graph::DFS_visit(Node *u, PaintColor paintThisWith)
 {
-    // test only
-    cout << "Graph::DFS_visit........" << endl;
-    // test only
-
     // time = time + 1;
     // u->d = time;
     u->color = GRAY;
     u->paintColor = paintThisWith;
-    PaintColor adjColor = NON_PAINTED;
     vector<Edge *>::iterator itE;
     for (itE = u->edge.begin(); itE != u->edge.end(); ++itE)
     {
         Node *v = (*itE)->getNeighbor(u);
-
-        // test only
-        cout << "Graph::DFS_visit: adj v = " << v->id << endl;
-        // test only
-
-        adjColor = NON_PAINTED;
         if (v->color == WHITE)
         {
             v->prev = u;
             PaintColor colorForNext = (paintThisWith == RED)? GREEN : RED; // pass diff color to next node
-            if (~DFS_visit(v, colorForNext)) {
+            if (DFS_visit(v, colorForNext) == false) {
                 u->paintConflict = true;
                 return false;
             }
         } else {
-            // test only
-            cout << "adjColor = " << adjColor << endl;
-            // test only
-            if (adjColor == NON_PAINTED) {
-                adjColor = v->paintColor;
-            } else {
-                if (adjColor != v->paintColor) {
-                    u->paintConflict = true;
-                    return false;
-                }
+            if (u->paintColor == v->paintColor) {
+                u->paintConflict = true;
+                return false;
             }
         }
     }
 
     u->color = BLACK;
-    // u->paintColor = (adjColor == NON_PAINTED || adjColor == RED)? GREEN : RED;
-    // time = time + 1;
-    // u.f = time;
     return true;
 }
