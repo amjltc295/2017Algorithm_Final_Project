@@ -42,8 +42,10 @@ Node::Node(const int& i, const int& x0, const int& y0, const int& x1, const int&
     y[0] = y0;
     x[1] = x1;
     y[1] = y1;
-    traveled = false;
-    color = -1;
+    paintConflict = false; // valid = 1 means this subgraph is colorable
+    color = WHITE;
+    paintColor = NON_PAINTED;
+    colored = false; // colored == 1 --> be colored yet
     d = DIS_INF;
     prev = 0;
 }
@@ -93,7 +95,7 @@ Graph::~Graph()
         (*itN2) = 0;
     }*/
 }
-        
+
 void Graph::addNode(const int& i, const int& x0, const int& y0, const int& x1, const int& y1)
 {
     Node *node;
@@ -141,6 +143,7 @@ void Graph::printGraph()
     {
         Node *node = (*it).second;
     	cout << "x1=" << node->x[0] << ',' << "y1=" << node->y[0] << ',' << "x2=" << node->x[1] << ',' <<"y2=" << node->y[1] << endl;
+        cout << "paintConflict = " << node->paintConflict << endl << endl;
     }
 
 }
@@ -201,10 +204,12 @@ void Graph::init()
     for ( itN = nodesMap.begin() ; itN != nodesMap.end() ; itN++ )
     {
         Node *node = (*itN).second;
-        node->traveled = false;
         node->d = DIS_INF;
         node->prev = 0;
-        node->color = -1;
+        node->color = WHITE;
+        node->colored = false;
+        node->paintColor = NON_PAINTED;
+        node->paintConflict = false;
     }
     
 }
@@ -214,3 +219,151 @@ Node * Graph::getNodeById(const int& id)
     return nodesMap[id];
 }
 
+void Build_Color_Graph(Graph *graph)
+{
+    graph->sortNodesByID();
+    for(int i=0;i<graph->nodes.size();i++)
+    {
+        for(int j=i+1;j<graph->nodes.size();j++)
+        {
+            int ax1=graph->nodes[i]->x[0];
+            int ax2=graph->nodes[i]->x[1];
+            int ay1=graph->nodes[i]->y[0];
+            int ay2=graph->nodes[i]->y[1];
+            int bx1=graph->nodes[j]->x[0];
+            int bx2=graph->nodes[j]->x[1];
+            int by1=graph->nodes[j]->y[0];
+            int by2=graph->nodes[j]->y[1];
+            int alpha=graph->alpha;
+            int beta=graph->beta;
+            if( ( bx1<=ax1 && bx2>ax1 ) || ( bx2>=ax2 && bx1<ax2) || ( bx1>=ax1 && bx2<=ax2 ))
+            {
+                if( ( by2 < ay1 && by2 > (ay1-beta) ) || ( by1 > ay2 && by1 < (ay2+beta) ) )
+                {
+                    graph->addEdge(i,j,1);
+                }
+            }
+            if( ( by1<=ay1 && by2>ay1 ) || ( by2>=ay2 && by1<ay2) || ( by1>=ay1 && by2<=ay2 ))
+            {
+                if( ( bx2 < ax1 && bx2 > (ax1-alpha) ) || ( bx1 > ax2 && bx1 < (ax2+alpha) ) )
+                {
+                    graph->addEdge(i,j,1);
+                }
+            }
+        }
+    }
+    cout<<"there are"<<graph->edges.size()<<"edges\n";
+}
+
+void Output_Graph(Graph * graph,char * filepath)
+{
+    fstream fout;
+    fout.open(filepath,ios::out);//open output file
+    fout<<"// SCC from specific input"<<endl;
+    fout<<"graph {"<<endl;
+    vector<int> outputed;
+    for(int i=0;i<graph->nodes.size();i++)
+    {
+        outputed.push_back(0);
+    }
+    for(int i=0;i<graph->edges.size();i++)
+    {
+        fout<<"v"<<graph->edges[i]->node[0]->id<<" -- v"<<graph->edges[i]->node[1]->id<<";"<<endl;
+        outputed[graph->edges[i]->node[0]->id]=1;
+        outputed[graph->edges[i]->node[1]->id]=1;
+    }
+    for(int i=0;i<graph->nodes.size();i++)
+    {
+        if(outputed[i]==0)
+        {
+            fout<<"v"<<i<<";"<<endl;
+        }
+    }
+    fout<<"}";
+}
+
+//////////////////////////////////////////////////////////////
+//// user defined ////////////////////////////////////////////
+void Graph::DFS()
+{
+    // test only
+    cout << "Graph::DFS()..........." << endl;
+    // test only
+
+    Graph::init();
+    // int time = 0;
+    map<int, Node *>::iterator itN;
+    for (itN = nodesMap.begin(); itN != nodesMap.end(); ++itN)
+    {
+        Node *node = (*itN).second;
+        // test only
+        cout << "Graph::DFS(): node = " << node->id << endl;
+        cout << "Graph::DFS(): node.color = " << node->color << endl;
+        // test only
+        if (node->color == WHITE)
+        {
+            // test only
+            cout << "Graph::DFS(): node = " << node->id << endl;
+            // test only
+
+            // DFS_visit(graph, node, time);
+            node->paintColor = RED;
+            if (~DFS_visit(node, GREEN))
+                node->paintConflict = true;
+        }
+    }
+}
+
+// bool Graph::DFS_visit(Node *u, int &time)
+// return false if paint conflict
+// we pass the color for next node in DFS using paintThisWith
+bool Graph::DFS_visit(Node *u, PaintColor paintThisWith)
+{
+    // test only
+    cout << "Graph::DFS_visit........" << endl;
+    // test only
+
+    // time = time + 1;
+    // u->d = time;
+    u->color = GRAY;
+    u->paintColor = paintThisWith;
+    PaintColor adjColor = NON_PAINTED;
+    vector<Edge *>::iterator itE;
+    for (itE = u->edge.begin(); itE != u->edge.end(); ++itE)
+    {
+        Node *v = (*itE)->getNeighbor(u);
+
+        // test only
+        cout << "Graph::DFS_visit: adj v = " << v->id << endl;
+        // test only
+
+        adjColor = NON_PAINTED;
+        if (v->color == WHITE)
+        {
+            v->prev = u;
+            PaintColor colorForNext = (paintThisWith == RED)? GREEN : RED; // pass diff color to next node
+            if (~DFS_visit(v, colorForNext)) {
+                u->paintConflict = true;
+                return false;
+            }
+        } else {
+            // test only
+            cout << "adjColor = " << adjColor << endl;
+            // test only
+            if (adjColor == NON_PAINTED) {
+                adjColor = v->paintColor;
+            } else {
+                if (adjColor != v->paintColor) {
+                    u->paintConflict = true;
+                    return false;
+                }
+            }
+        }
+    }
+
+    u->color = BLACK;
+    // u->paintColor = (adjColor == NON_PAINTED || adjColor == RED)? GREEN : RED;
+    // time = time + 1;
+    // u.f = time;
+    return true;
+}
