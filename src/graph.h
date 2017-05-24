@@ -63,7 +63,10 @@ public:
     ~SubGraph();
     
     int colorDiff;
+    bool colored;
     std::vector<Node *> subGraph;
+    void flipColor();
+
 };
 
 // as the sliding window. The whole ckt layout would be divided into many small windows.

@@ -11,8 +11,9 @@ NTUEE Algorithm 2017 Final Project
 Build a graph and see if it's 2-colorable. Try to balance the two color in a color window.
 
 
-## Algorithm
+## Psudocode & Algorithm
 
+Overall
 ```
 Read file
 
@@ -33,11 +34,26 @@ For each window in windowsMap
     For each subgraph in window.subGraphInWindow
         Do DFS find color difference of each SubGraph (subgraph.color_diff)
             Check if colored
-    Sum colored nodesSet
+    //Sum colored nodesSet //Done in Greedy
     Do Greedy to balance (find minimum color differece, exclude colored nodes)
     
 
 
+```
+Greedy
+```
+
+
+Let (list of subgraphs in this window for colorDiff comparison, excluding colored ones) be color_diff_list
+Sort the color_diff_list
+Let (sum of the color_diff_list) be color_diff_sum
+color_diff_sum = (sum of colorDiff of colored subgraphs)
+For each_fixed = 0 to color_diff_list.size:
+    For i = each_fixed to color_diff_list.size:
+        if  (color_diff_sum > 0):
+            filp(subgraph of color_diff_list[i])
+            color_dif_list[i] *= -1
+        color_diff_sum += color_diff_list[i]
 ```
 
 ## Code Example
