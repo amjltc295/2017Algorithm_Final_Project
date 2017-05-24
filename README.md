@@ -6,7 +6,10 @@
 
 NTUEE Algorithm 2017 Final Project
 
-ICCAD 2015 Contest - Color Balancing for Double Patterning
+[ICCAD 2015 Contest - Color Balancing for Double Patterning](http://cad-contest.el.cycu.edu.tw/problem_E/default.htm)
+
+Build a graph and see if it's 2-colorable. Try to balance the two color in a color window.
+
 
 ## Algorithm
 
@@ -41,9 +44,6 @@ For each window in windowsMap
 
 ~~Show what the library does as concisely as possible, developers should be able to figure out **how** your project solves their problem by looking at the code example. Make sure the API you are showing off is obvious, and that your code is short and concise.~~
 
-## Motivation
-
-~~A short description of the motivation behind the creation and maintenance of the project. This should explain **why** the project exists.~~
 
 ## Installation
 
