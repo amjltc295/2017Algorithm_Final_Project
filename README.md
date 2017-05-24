@@ -36,14 +36,11 @@ For each window in windowsMap
             Check if colored
     //Sum colored nodesSet //Done in Greedy
     Do Greedy to balance (find minimum color differece, exclude colored nodes)
-    
 
 
 ```
 Greedy
 ```
-
-
 Let (list of subgraphs in this window for colorDiff comparison, excluding colored ones) be color_diff_list
 Sort the color_diff_list
 Let (sum of the color_diff_list) be color_diff_sum
@@ -83,6 +80,8 @@ make
 ## Contributors
 
 Ya-Liang Chang
+
+Benjamin Kao
 
 ~~Let people know how they can dive into the project, include important links to things like issue trackers, irc, twitter accounts if applicable.~~
 
