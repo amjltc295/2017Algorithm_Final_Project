@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
         i++;
     }
     //cout << x0 << ',' << y0 << ',' << x1 << ',' << y1 << endl;
-    graphPtr->printGraph();
+    //graphPtr->printGraph();
     Build_Color_Graph(graphPtr);
     Output_Graph(graphPtr,argv[2]);
         
@@ -107,6 +107,7 @@ int main(int argc, char* argv[])
     // test only
     graphPtr->DFS();
     graphPtr->printGraph();
+    graphPtr->Find_Coloring_Bounding_Box();
 
     //do color balancing
 

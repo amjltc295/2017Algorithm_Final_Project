@@ -104,6 +104,7 @@ class Graph{
         // graph travel
         void DFS();
         bool DFS_visit(Node *u, PaintColor paintThisWith);
+        void Find_Coloring_Bounding_Box(); // after find whether the nodes are 2 colorable, update the colorBoundBox. 
 
         // colorBoundBox[0] = x_left, [1] = x_right, [2] = y_up, [3] = y_down;
         int colorBoundBox[4];
@@ -118,7 +119,7 @@ class Graph{
 };
 
 
-void Build_Color_Graph(Graph *);
-void Output_Graph(Graph *,char * filepath);
+void Build_Color_Graph(Graph *); // run for a graph and add edge bewteen nodes if they are too close
+void Output_Graph(Graph *,char * filepath); // output a .dot file to see if the Build_Color_Graph function runs properly. The dot file contain all nodes and edges between them if they are too close.
 
 #endif

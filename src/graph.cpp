@@ -142,7 +142,7 @@ void Graph::printGraph()
     for ( it = nodesMap.begin() ; it != nodesMap.end() ; it++ )
     {
         Node *node = (*it).second;
-    	cout << "x1=" << node->x[0] << ',' << "y1=" << node->y[0] << ',' << "x2=" << node->x[1] << ',' <<"y2=" << node->y[1] << endl;
+    	cout << "Node v" << node->id << ": x1=" << node->x[0] << ',' << "y1=" << node->y[0] << ',' << "x2=" << node->x[1] << ',' <<"y2=" << node->y[1] << endl;
         cout << "paintConflict = " << node->paintConflict << endl << endl;
     }
 
@@ -252,7 +252,7 @@ void Build_Color_Graph(Graph *graph)
             }
         }
     }
-    cout<<"there are"<<graph->edges.size()<<"edges\n";
+    cout<<"Add edges between nodes.\nthere are "<<graph->edges.size()<<" edges\n";
 }
 
 void Output_Graph(Graph * graph,char * filepath)
@@ -331,4 +331,37 @@ bool Graph::DFS_visit(Node *u, PaintColor paintThisWith)
 
     u->color = BLACK;
     return true;
+}
+
+void Graph::Find_Coloring_Bounding_Box()
+{
+    // x0 is the smaller one
+    // colorBoundBox[0] = x_left, [1] = x_right, [2] = y_up, [3] = y_down;
+    colorBoundBox[0]=colorBoundBox[3]=DIS_INF;
+    colorBoundBox[1]=colorBoundBox[2]=-DIS_INF;
+    map<int, Node *>::iterator itN;
+    for (itN = nodesMap.begin(); itN != nodesMap.end(); ++itN)
+    {
+        Node *node = (*itN).second;
+        if ( node->paintConflict == false )
+        {
+            if ( node->x[0] < colorBoundBox[0] )
+            {
+                colorBoundBox[0]=node->x[0];
+            }
+            if ( node->x[1] > colorBoundBox[1] )
+            {
+                colorBoundBox[1]=node->x[1];
+            }
+            if ( node->y[0] < colorBoundBox[3] )
+            {
+                colorBoundBox[3]=node->y[0];
+            }
+            if ( node->y[1] > colorBoundBox[2] )
+            {
+                colorBoundBox[2]=node->y[1];
+            }
+        }
+    }
+    cout << "Find coloring bounding box:\nx0=" << colorBoundBox[0] << " ,x1=" << colorBoundBox[1] << " ,y0=" << colorBoundBox[3] << " ,y1=" << colorBoundBox[2] <<endl;
 }
