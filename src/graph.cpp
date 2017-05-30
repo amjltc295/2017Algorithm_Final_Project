@@ -46,6 +46,7 @@ Node::Node(const int& i, const int& x0, const int& y0, const int& x1, const int&
     color = WHITE;
     paintColor = NON_PAINTED;
     colored = false; // colored == 1 --> be colored yet
+    SubGraphed = fasle;
     d = DIS_INF;
     prev = 0;
 }
@@ -198,6 +199,49 @@ void Graph::sortNodesByID()
 {
     sort(nodes.begin(), nodes.end(), NodeCompByID);
 }
+
+bool NodeCompByX0( const Node* A, const Node* B )
+{
+    if ( A->x[0] < B->x[0] )
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+void Graph::sortNodesByX0()
+{
+    sort(nodes.begin(), nodes.end(), NodeCompByX0);
+    for ( int i=0 ; i < nodes.size() ; i++ )
+    {
+        X_SortedNodeList.push_back(nodes[i]->id)
+    }
+}
+
+bool NodeCompByY0( const Node* A, const Node* B )
+{
+    if ( A->y[0] < B->y[0] )
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+void Graph::sortNodesByY0()
+{
+    sort(nodes.begin(), nodes.end(), NodeCompByY0);
+    for ( int i=0 ; i < nodes.size() ; i++ )
+    {
+        Y_SortedNodeList.push_back(nodes[i]->id)
+    }
+}
+
 void Graph::init()
 {
     map<int, Node *>::iterator itN;
@@ -364,4 +408,58 @@ void Graph::Find_Coloring_Bounding_Box()
         }
     }
     cout << "Find coloring bounding box:\nx0=" << colorBoundBox[0] << " ,x1=" << colorBoundBox[1] << " ,y0=" << colorBoundBox[3] << " ,y1=" << colorBoundBox[2] <<endl;
+}
+
+Window::Window(const int& i, const int& x0, const int& x1, const int& y0, const int& y1)
+{
+    index = i;
+    leftX = x0;
+    rightX = x1;
+    downY = y0;
+    upY = y1;
+}
+
+void Graph::Build_Color_Dsnsity_Windows()
+{
+    int start_Y=colorBoundBox[3]; // mean the down y of window.
+    int start_X=colorBoundBox[0]; // mean the left x of window.
+    int i=0; // mean the counter of window.
+    while ( start_Y<colorBoundBox[2] )
+    {
+        if ( start_Y+omega > colorBoundBox[2] )
+        {
+            start_Y=colorBoundBox[2]-omega;
+        }
+        while ( start_X<colorBoundBox[1] )
+        {
+            if ( start_X+omega>colorBoundBox[1] )
+            {
+                start_X=colorBoundBox[1]-omega;
+            }
+            Window *window;
+            window = new Window(i,start_X,start_X+omega,start_Y,start_Y+omega);
+            windowsMap[i] = window;
+            windows.push_back(window);
+
+            //add subgraphes to 
+
+            i++;
+            start_X+=omega;
+        }
+        start_X=colorBoundBox[0];
+        start_Y+=omega;
+    }
+    cout << "\nThere are " << i << " color density windows.\n";
+    map<int, Window *>::iterator itN;
+    for (itN = windowsMap.begin(); itN != windowsMap.end(); ++itN)
+    {
+        Window *window=(*itN).second;
+        cout << "Window " << window->index << " leftX=" << window->leftX << " rightX=" << window->rightX << " downY=" << window->downY << " upY=" << window->upY << endl;
+    }
+}
+
+void Window::addSubGraph(Graph *graph)
+{
+    vector<int> XinThisSubgraph; //
+    vector<int> YinThisSubgraph;
 }

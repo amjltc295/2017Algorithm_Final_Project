@@ -108,6 +108,7 @@ int main(int argc, char* argv[])
     graphPtr->DFS();
     graphPtr->printGraph();
     graphPtr->Find_Coloring_Bounding_Box();
+    graphPtr->Build_Color_Dsnsity_Windows();
 
     //do color balancing
 

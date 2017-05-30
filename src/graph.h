@@ -48,6 +48,7 @@ class Node{
 
         bool colored; // if colored == true, skip balancing step.
         bool paintConflict; // paintConflict == true --> the subgraph cannot be paint with two color.
+        bool SubGraphed; // if Subgraphed == true ,we should not add them into a subgraph again.
         vector<Edge *> edge;
 
         int d;
@@ -63,8 +64,8 @@ public:
     ~SubGraph();
     
     int colorDiff;
-    bool colored;
-    std::vector<Node *> subGraph;
+    bool colored; // if colored == true , we should filp the subgraph in the next window
+    vector<Node *> subGraphNodes;
     void flipColor();
 
 };
@@ -75,12 +76,13 @@ public:
 class Window
 {
 public:
-    Window();
+    Window(const int& i, const int& x0, const int& x1, const int& y0, const int& y1);
     ~Window();
+    void addSubGraph(Graph *graph);
 
     int index;
     int leftX, rightX;
-    int leftY, rightY;
+    int upY, downY;
     std::map<int, SubGraph *> subGraphSet; // contain all the subgraph in one window.
 };
 
@@ -98,6 +100,8 @@ class Graph{
         void sortEdgesByWeight();
         void sortNodesByDegree();
         void sortNodesByID();
+        void sortNodesByX0(); // sort nodes by x0 and store the order in X_SortedNodeList
+        void sortNodesByY0(); // sort nodes by y0 and store the order in Y_SortedNodeList
         void init();
         Node * getNodeById(const int& id);
 
@@ -105,6 +109,7 @@ class Graph{
         void DFS();
         bool DFS_visit(Node *u, PaintColor paintThisWith);
         void Find_Coloring_Bounding_Box(); // after find whether the nodes are 2 colorable, update the colorBoundBox. 
+        void Build_Color_Dsnsity_Windows(); // after build the coloring bounding box, add the color density windows.
 
         // colorBoundBox[0] = x_left, [1] = x_right, [2] = y_up, [3] = y_down;
         int colorBoundBox[4];
@@ -113,6 +118,9 @@ class Graph{
         map<int, Window *> windowsMap;
         vector<Node *> nodes;
         vector<Edge *> edges;
+        vector<Window *> windows;
+        vector<int> X_SortedNodeList; // list contain the ids of nodes sorted by x0 (left x)
+        vector<int> Y_SortedNodeList; // list contain the ids of nodes sorted by y0 (down y)
         int alpha;
         int beta;
         int omega;
