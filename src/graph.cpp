@@ -46,7 +46,6 @@ Node::Node(const int& i, const int& x0, const int& y0, const int& x1, const int&
     color = WHITE;
     paintColor = NON_PAINTED;
     colored = false; // colored == 1 --> be colored yet
-    SubGraphed = fasle;
     d = DIS_INF;
     prev = 0;
 }
@@ -217,7 +216,7 @@ void Graph::sortNodesByX0()
     sort(nodes.begin(), nodes.end(), NodeCompByX0);
     for ( int i=0 ; i < nodes.size() ; i++ )
     {
-        X_SortedNodeList.push_back(nodes[i]->id)
+        X_SortedNodeList.push_back(nodes[i]->id);
     }
 }
 
@@ -238,7 +237,7 @@ void Graph::sortNodesByY0()
     sort(nodes.begin(), nodes.end(), NodeCompByY0);
     for ( int i=0 ; i < nodes.size() ; i++ )
     {
-        Y_SortedNodeList.push_back(nodes[i]->id)
+        Y_SortedNodeList.push_back(nodes[i]->id);
     }
 }
 
@@ -330,15 +329,24 @@ void Output_Graph(Graph * graph,char * filepath)
 //// user defined ////////////////////////////////////////////
 void Graph::DFS()
 {
-
+    int i=0; // this just a index of wholeSubGraphMap.
     Graph::init();
     map<int, Node *>::iterator itN;
     for (itN = nodesMap.begin(); itN != nodesMap.end(); ++itN)
     {
         Node *node = (*itN).second;
+        SubGraph *tempsubgraph; // this is the temporary subgraph to store DFSed nodes, and it will be store in wholeSubGraph and wholeSubGraphMap after check that these nodes are 2-colorable.
+        tempsubgraph = new SubGraph();
         if (node->color == WHITE) {
-            if (DFS_visit(node, RED) == false) {
+            if (DFS_visit(node, RED, tempsubgraph) == false) {
                 node->paintConflict = true;
+            }
+            else
+            {
+                // ensured thar there is no conflict in this subgraph, add it into the wholeSubGraph
+                wholeSubGraphMap[i] = tempsubgraph;
+                wholeSubGraph.push_back(tempsubgraph);
+                i++;
             }
         }
     }
@@ -347,7 +355,7 @@ void Graph::DFS()
 // bool Graph::DFS_visit(Node *u, int &time)
 // return false if paint conflict
 // we pass the color for next node in DFS using paintThisWith
-bool Graph::DFS_visit(Node *u, PaintColor paintThisWith)
+bool Graph::DFS_visit(Node *u, PaintColor paintThisWith, SubGraph *tempsubgraph)
 {
     // time = time + 1;
     // u->d = time;
@@ -361,7 +369,7 @@ bool Graph::DFS_visit(Node *u, PaintColor paintThisWith)
         {
             v->prev = u;
             PaintColor colorForNext = (paintThisWith == RED)? GREEN : RED; // pass diff color to next node
-            if (DFS_visit(v, colorForNext) == false) {
+            if (DFS_visit(v, colorForNext, tempsubgraph) == false) {
                 u->paintConflict = true;
                 return false;
             }
@@ -374,6 +382,7 @@ bool Graph::DFS_visit(Node *u, PaintColor paintThisWith)
     }
 
     u->color = BLACK;
+    tempsubgraph->subGraphNodes.push_back(u); // after u goes to black, that means the DFS has been done on u, and we shold put u into the tempsubgraph.
     return true;
 }
 
@@ -441,7 +450,7 @@ void Graph::Build_Color_Dsnsity_Windows()
             windowsMap[i] = window;
             windows.push_back(window);
 
-            //add subgraphes to 
+            window->addSubGraph(this); // add subgraphes to the window.
 
             i++;
             start_X+=omega;
@@ -460,6 +469,54 @@ void Graph::Build_Color_Dsnsity_Windows()
 
 void Window::addSubGraph(Graph *graph)
 {
-    vector<int> XinThisSubgraph; //
-    vector<int> YinThisSubgraph;
+    int k=0; // just a index of subGraphSet.
+    for ( int i=0 ; i < graph->wholeSubGraph.size() ; i++ )
+    {
+        for ( int j=0 ; j < graph->wholeSubGraph[i]->subGraphNodes.size() ; j++ )
+        {
+            Node *thisnode=graph->wholeSubGraph[i]->subGraphNodes[j]; // used to check every node in this subgraph is in this window or not
+            if ( ! ( thisnode->paintConflict ) )
+            {
+                if ( ! ( thisnode->x[0] >= rightX || thisnode->x[1] <= leftX ) )
+                {
+                    if ( ! ( thisnode->y[0] >= upY || thisnode->y[1] <= downY ) )
+                    {
+                        // thisnode is 2-paintable and is in this window
+                        subGraphSet[k]=graph->wholeSubGraph[i]; // add the subgraph into the subGraphSet of this window.
+                        int total_red_area=0; // calculate the color difference "in this window",and store it into the subgraph's colorDiff
+                        int total_green_area=0;
+                        for( int l=0 ; l<subGraphSet[k]->subGraphNodes.size() ; l++ )
+                        {
+                            if ( subGraphSet[k]->subGraphNodes[l]->paintColor == RED )
+                            {
+                                total_red_area+=AreaInTheWindow(subGraphSet[k]->subGraphNodes[l]);
+                            }
+                            else
+                            {
+                                total_green_area+=AreaInTheWindow(subGraphSet[k]->subGraphNodes[l]);   
+                            }
+                        }
+                        subGraphSet[k]->colorDiff[index] = ( total_red_area - total_green_area );
+                        k++;
+                    }
+                }
+            }
+        }
+    }
+}
+
+int Window::AreaInTheWindow(Node *u)
+{
+    int left=( u->x[0] > leftX ) ? u->x[0] : leftX;
+    int right=( u->x[1] < rightX ) ? u->x[1] : rightX;
+    int up=( u->y[1] < upY ) ? u->y[1] : upY;
+    int down=( u->y[0] > downY ) ? u->y[0] : downY;
+    if ( left < right && down < up )
+    {
+        return (up-down)*(right-left);
+    }
+    else
+    {
+        return 0;
+    }
 }
