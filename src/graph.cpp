@@ -88,6 +88,11 @@ bool SubGraph::flipColor()
             return false;
         }
     }
+    map<int, int>::iterator iter;
+    for (iter = colorDiff.begin(); iter != colorDiff.end(); ++iter) {
+        iter->second *= -1;
+    }
+    
     return true;
 }
 /////////////// End of SubGraph Methods ///////////////////////
@@ -188,10 +193,11 @@ struct subGraphCompByColorDiff {
  * color_diff_sum = (sum of colorDiff of colored subgraphs)
  * //Let (min of sum of colorDiff) be min_color_diff_sum = MAX_INT
  * //For each_fixed = 0 to color_diff_list.size:
- *     For j = each_fixed to color_diff_list.size:
+ *     For j = each_fixed to color_diff_list.size:  //Cancel; only one time is enough
  *         if  (color_diff_sum > 0):
+ *             // SubGraph::flipColor()
  *             filp(subgraph of color_diff_list[j])
- *             color_dif_list[j] *= -1
+ *             color_dif_list[j] *= -1 
  *         color_diff_sum += color_diff_list[j]
  *         set subgraph_j colored
  *   //  if color_diff_sum < min_color_diff_sum:
@@ -213,8 +219,7 @@ void Window::greedyForColorBalancing() {
         else {
             //Flip the subGraph if its colorDiff is negative and it's not colored
             if (subGraph_iter->second->colorDiff[index] < 0) {
-                subGraph_iter->second->flipColor();
-                subGraph_iter->second->colorDiff[index] *= -1;
+                assert(subGraph_iter->second->flipColor());
             }
 
             color_diff_list.push_back(subGraph_iter->second);
@@ -230,7 +235,6 @@ void Window::greedyForColorBalancing() {
         cout << j << " color_diff: " <<  color_diff_list[j]->colorDiff[index] << endl;
         if ( color_diff_sum > 0 ) {
             assert(color_diff_list[j]->flipColor());
-            color_diff_list[j]->colorDiff[index] *= -1;
         }
         color_diff_sum += color_diff_list[j]->colorDiff[index];
         //set subgraph colored
