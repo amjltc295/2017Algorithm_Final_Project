@@ -48,10 +48,11 @@ Create windowsMap in Graph
 Greedy
 ```
 Let (list of subgraphs in this window for colorDiff comparison, excluding colored ones) be color_diff_list
+Flip all subGraph with negative colorDiff in color_diff_list
 Sort the color_diff_list
 Let (total color difference in this window) be color_diff_sum
 color_diff_sum = (sum of colorDiff of colored subgraphs)
-For each_fixed_index = 0 to color_diff_list.size:
+//For each_fixed_index = 0 to color_diff_list.size:
     For i = each_fixed_index to color_diff_list.size:
         if  (color_diff_sum > 0):
             filp(subgraph of color_diff_list[i])
