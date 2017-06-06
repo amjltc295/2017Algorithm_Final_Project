@@ -304,7 +304,7 @@ void Graph::printGraph()
     for ( it = nodesMap.begin() ; it != nodesMap.end() ; it++ )
     {
         Node *node = (*it).second;
-    	cout << "Node v" << node->id << ": x1=" << node->x[0] << ',' << "y1=" << node->y[0] << ',' << "x2=" << node->x[1] << ',' <<"y2=" << node->y[1] << endl;
+        cout << "Node v" << node->id << ": x1=" << node->x[0] << ',' << "y1=" << node->y[0] << ',' << "x2=" << node->x[1] << ',' <<"y2=" << node->y[1] << endl;
         cout << "paintConflict = " << node->paintConflict << endl << endl;
     }
 
