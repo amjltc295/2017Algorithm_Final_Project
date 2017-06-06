@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
     graphPtr->Balance_Color();
     
     // test only
-    // graphPtr->output_unbalanced_color_graph(argv[2]);
+    graphPtr->output_unbalanced_color_graph(argv[2]);
     // test only
 
     //do color balancing
