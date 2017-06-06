@@ -213,6 +213,7 @@ void Window::greedyForColorBalancing() {
         for ( int j = i; j < color_diff_list.size(); j++ ) {
             if ( color_diff_sum > 0 ) {
                 assert(color_diff_list[j]->flipColor());
+                color_diff_list[j]->colorDiff[index] *= -1;
             }
             color_diff_sum += color_diff_list[j]->colorDiff[index];
             //set subgraph colored
