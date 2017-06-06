@@ -12,6 +12,7 @@
 #include <fstream>
 #include "../lib/tm_usage.h"
 #include "graph.h"
+//#include "color_balance_greedy.h"
 
 using namespace std;
 using namespace CommonNs;
@@ -108,7 +109,8 @@ int main(int argc, char* argv[])
     graphPtr->DFS();
     graphPtr->printGraph();
     graphPtr->Find_Coloring_Bounding_Box();
-    graphPtr->Build_Color_Dsnsity_Windows();
+    graphPtr->Build_Color_Density_Windows();
+    graphPtr->Balance_Color();
 
     //do color balancing
 

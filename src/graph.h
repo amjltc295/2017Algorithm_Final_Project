@@ -66,7 +66,7 @@ public:
     map<int ,int> colorDiff; // this means that the color diffetence for different windows. < window->id , colorDiff >. and colordiff is RED-GREEN.
     bool colored; // if colored == true , we should filp the subgraph in the next window
     vector<Node *> subGraphNodes;
-    void flipColor();
+    bool flipColor();
 
 };
 
@@ -80,6 +80,8 @@ public:
     ~Window();
     void addSubGraph(Graph *graph);
     int AreaInTheWindow(Node *u); //return the area of node u in this window.
+//    bool subGraphCompByColorDiff(const SubGraph *A, const SubGraph *B);
+    void greedyForColorBalancing();
 
     int index;
     int leftX, rightX;
@@ -110,7 +112,8 @@ class Graph{
         void DFS();
         bool DFS_visit(Node *u, PaintColor paintThisWith, SubGraph *tempsubgraph);
         void Find_Coloring_Bounding_Box(); // after find whether the nodes are 2 colorable, update the colorBoundBox. 
-        void Build_Color_Dsnsity_Windows(); // after build the coloring bounding box, add the color density windows.
+        void Build_Color_Density_Windows(); // after build the coloring bounding box, add the color density windows.
+        void Balance_Color();
 
         // colorBoundBox[0] = x_left, [1] = x_right, [2] = y_up, [3] = y_down;
         int colorBoundBox[4];

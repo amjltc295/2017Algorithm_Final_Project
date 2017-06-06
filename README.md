@@ -19,23 +19,29 @@ Read file
 
 Add edges on the nodes (for x, y distance between nodes < alpha, beta) in Graph 
 
+// Graph::DFS()
 Do DFS on Graph
     Build Graph.wholeSubGraphMap. (Find the nodes connected by edge, create)
     Find the conflict. (Find whether the subraphs is 2-colorable)
-    Find the bondage of color bounding box. (don't care about the conflict subgraphs)
+        If no confict, give RED and GREEN for later calculation of colorDiff
 
+// Graph::Find_Coloring_Bounding_Box()
+Find the bondage of color bounding box. (Exclude the conflict subgraphs)
+
+// Graph::Build_Color_Density_Windos()
 Create windowsMap in Graph
 
-For each SubGraph in Graph.wholeSubGraphMap
-    Find windows which it belongs to
-    Put each SubGraph into Window.subGraphMap
+    // Window::addSubGraph()
+    For each SubGraph in Graph.wholeSubGraphMap
+        Find windows which it belongs to
+        Put each SubGraph into Window.subGraphMap
 
-For each window in windowsMap
-    For each subgraph in window.subGraphInWindow
-        Do DFS find color difference of each SubGraph (subgraph.color_diff)
-            Check if colored
-    //Sum colored nodesSet //Done in Greedy
-    Do Greedy to balance (find minimum color differece, exclude colored nodes)
+    For each window in windowsMap
+        For each subgraph in window.subGraphInWindow
+            Find color difference of each SubGraph (subgraph.color_diff)
+            //Check if colored
+        //Sum colored nodesSet //Done in Greedy
+        Do Greedy to balance (find minimum color differece, exclude colored nodes)
 
 
 ```
@@ -43,14 +49,15 @@ Greedy
 ```
 Let (list of subgraphs in this window for colorDiff comparison, excluding colored ones) be color_diff_list
 Sort the color_diff_list
-Let (sum of the color_diff_list) be color_diff_sum
+Let (total color difference in this window) be color_diff_sum
 color_diff_sum = (sum of colorDiff of colored subgraphs)
-For each_fixed = 0 to color_diff_list.size:
-    For i = each_fixed to color_diff_list.size:
+For each_fixed_index = 0 to color_diff_list.size:
+    For i = each_fixed_index to color_diff_list.size:
         if  (color_diff_sum > 0):
             filp(subgraph of color_diff_list[i])
             color_dif_list[i] *= -1
         color_diff_sum += color_diff_list[i]
+        set subgraph[i] colored
 ```
 
 ## Code Example
@@ -79,11 +86,10 @@ make
 
 ## Contributors
 
-Ya-Liang Chang
+Ya-Liang Chang [amjltc295] (https://github.com/amjltc295)
 
-Benjamin Kao
+Benjamin Kao [kaoben2731] (https://github.com/kaoben2731)
 
-~~Let people know how they can dive into the project, include important links to things like issue trackers, irc, twitter accounts if applicable.~~
 
 ## License
 

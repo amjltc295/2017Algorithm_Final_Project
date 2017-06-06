@@ -1,5 +1,6 @@
 #include "graph.h"
 #include <iostream>
+#include <cassert>
 using namespace std;
 
 
@@ -65,6 +66,165 @@ void Node::sortEdge()
 {
     sort(edge.begin(), edge.end(), edgeComp);
 }
+
+///////////////////// SubGraph Methods ///////////////////////
+SubGraph::SubGraph()
+{
+}
+
+bool SubGraph::flipColor()
+{
+    if (colored)
+        return false;
+    int subGraphNodesSize = subGraphNodes.size();
+    for ( int i = 0; i < subGraphNodesSize; i++) {
+        if (subGraphNodes[i]->paintColor == RED)
+            subGraphNodes[i]->paintColor = GREEN;
+        else if (subGraphNodes[i]->paintColor == GREEN)
+            subGraphNodes[i]->paintColor = RED;
+        else {
+            cout << "Error in SubGraph::flipColor(): node not colored" << endl; 
+            return false;
+        }
+    }
+    return true;
+}
+/////////////// End of SubGraph Methods ///////////////////////
+
+
+
+//////////////////// Window Methods //////////////////////////
+
+Window::Window(const int& i, const int& x0, const int& x1, const int& y0, const int& y1)
+{
+    index = i;
+    leftX = x0;
+    rightX = x1;
+    downY = y0;
+    upY = y1;
+}
+
+//Add subgraph (a node set) to the window and calculate its colorDiff
+void Window::addSubGraph(Graph *graph)
+{
+    int k=0; // just a index of subGraphSet.
+    for ( int i = 0 ; i < graph->wholeSubGraph.size() ; i++ )
+    {
+        for ( int j = 0 ; j < graph->wholeSubGraph[i]->subGraphNodes.size() ; j++ )
+        {
+            //used to check every node in this subgraph is in this window or not
+            Node *thisnode = graph->wholeSubGraph[i]->subGraphNodes[j];
+
+            //check if this node is 2-colorable
+            if ( ! ( thisnode->paintConflict ) ) 
+            {
+                //check if this node is in this window
+                if ( ! ( thisnode->x[0] >= rightX || thisnode->x[1] <= leftX ) ) 
+                {
+                    if ( ! ( thisnode->y[0] >= upY || thisnode->y[1] <= downY ) )
+                    {
+                        //Add the subgraph into the subGraphSet of this window.
+                        subGraphSet[k] = graph->wholeSubGraph[i]; 
+                        // calculate the color difference "in this window", and store it into the subgraph's colorDiff
+                        int total_red_area = 0; 
+                        int total_green_area = 0;
+                        for( int l = 0 ; l < subGraphSet[k]->subGraphNodes.size() ; l++ )
+                        {
+                            if ( subGraphSet[k]->subGraphNodes[l]->paintColor == RED )
+                            {
+                                total_red_area += AreaInTheWindow(subGraphSet[k]->subGraphNodes[l]);
+                            }
+                            else
+                            {
+                                total_green_area += AreaInTheWindow(subGraphSet[k]->subGraphNodes[l]);   
+                            }
+                        }
+                        subGraphSet[k]->colorDiff[index] = ( total_red_area - total_green_area );
+                        k++;
+                    }
+                }
+            }
+        }
+    }
+}
+
+//Calculater the node's area in the window
+int Window::AreaInTheWindow(Node *u)
+{
+    int left = ( u->x[0] > leftX ) ? u->x[0] : leftX;
+    int right = ( u->x[1] < rightX ) ? u->x[1] : rightX;
+    int up = ( u->y[1] < upY ) ? u->y[1] : upY;
+    int down = ( u->y[0] > downY ) ? u->y[0] : downY;
+    if ( left < right && down < up )
+    {
+        return (up-down)*(right-left);
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+
+struct subGraphCompByColorDiff {
+    subGraphCompByColorDiff (const int windowIndex){
+        this->windowIndex = windowIndex;
+    }
+    bool operator () (SubGraph *A, SubGraph *B) {
+        int colorDiffA = A->colorDiff.find(this->windowIndex)->second;
+        int colorDiffB = B->colorDiff.find(this->windowIndex)->second;
+        if ( colorDiffA > colorDiffB ) return true;
+        return false;
+    }
+    int windowIndex;
+};
+
+/* 
+ * Let (list of subgraphs in this window for colorDiff comparison, excluding colored ones) be color_diff_list
+ * Sort the color_diff_list
+ * Let (sum of the color_diff_list) be color_diff_sum
+ * color_diff_sum = (sum of colorDiff of colored subgraphs)
+ * For each_fixed = 0 to color_diff_list.size:
+ *     For j = each_fixed to color_diff_list.size:
+ *         if  (color_diff_sum > 0):
+ *             filp(subgraph of color_diff_list[j])
+ *             color_dif_list[j] *= -1
+ *         color_diff_sum += color_diff_list[j]
+ *         set subgraph_j colored
+ *         
+ *
+ */
+void Window::greedyForColorBalancing() {
+    vector<SubGraph *> color_diff_list;
+    int color_diff_sum = 0;
+    map<int, SubGraph *>::iterator subGraph_iter;
+    //Create color_diff_list excluding colored ones
+    //Also sum the colorDiff of colored ones
+    for (subGraph_iter = subGraphSet.begin(); subGraph_iter != subGraphSet.end(); subGraph_iter++) {
+        if (subGraph_iter->second->colored)
+            color_diff_sum += subGraph_iter->second->colorDiff[index];
+        else 
+            color_diff_list.push_back(subGraph_iter->second);
+    }
+        
+    sort(color_diff_list.begin(), color_diff_list.end(), subGraphCompByColorDiff(index));
+    
+    for ( int i = 0; i < color_diff_list.size(); i++ ) {
+        for ( int j = i; j < color_diff_list.size(); j++ ) {
+            if ( color_diff_sum > 0 ) {
+                assert(color_diff_list[j]->flipColor());
+            }
+            color_diff_sum += color_diff_list[j]->colorDiff[index];
+            //set subgraph colored
+            color_diff_list[j]->colored = true;
+        }
+    }
+}
+
+///////////// End of Window Methods ////////////////////////////
+
+
+//////////////////// Graph Methods ////////////////////////////
 
 Graph::Graph(const int& a, const int& b, const int& o)
 {
@@ -262,70 +422,6 @@ Node * Graph::getNodeById(const int& id)
     return nodesMap[id];
 }
 
-void Build_Color_Graph(Graph *graph)
-{
-    graph->sortNodesByID();
-    for(int i=0;i<graph->nodes.size();i++)
-    {
-        for(int j=i+1;j<graph->nodes.size();j++)
-        {
-            int ax1=graph->nodes[i]->x[0];
-            int ax2=graph->nodes[i]->x[1];
-            int ay1=graph->nodes[i]->y[0];
-            int ay2=graph->nodes[i]->y[1];
-            int bx1=graph->nodes[j]->x[0];
-            int bx2=graph->nodes[j]->x[1];
-            int by1=graph->nodes[j]->y[0];
-            int by2=graph->nodes[j]->y[1];
-            int alpha=graph->alpha;
-            int beta=graph->beta;
-            if( ( bx1<=ax1 && bx2>ax1 ) || ( bx2>=ax2 && bx1<ax2) || ( bx1>=ax1 && bx2<=ax2 ))
-            {
-                if( ( by2 < ay1 && by2 > (ay1-beta) ) || ( by1 > ay2 && by1 < (ay2+beta) ) )
-                {
-                    graph->addEdge(i,j,1);
-                }
-            }
-            if( ( by1<=ay1 && by2>ay1 ) || ( by2>=ay2 && by1<ay2) || ( by1>=ay1 && by2<=ay2 ))
-            {
-                if( ( bx2 < ax1 && bx2 > (ax1-alpha) ) || ( bx1 > ax2 && bx1 < (ax2+alpha) ) )
-                {
-                    graph->addEdge(i,j,1);
-                }
-            }
-        }
-    }
-    cout<<"Add edges between nodes.\nthere are "<<graph->edges.size()<<" edges\n";
-}
-
-void Output_Graph(Graph * graph,char * filepath)
-{
-    fstream fout;
-    fout.open(filepath,ios::out);//open output file
-    fout<<"// SCC from specific input"<<endl;
-    fout<<"graph {"<<endl;
-    vector<int> outputed;
-    for(int i=0;i<graph->nodes.size();i++)
-    {
-        outputed.push_back(0);
-    }
-    for(int i=0;i<graph->edges.size();i++)
-    {
-        fout<<"v"<<graph->edges[i]->node[0]->id<<" -- v"<<graph->edges[i]->node[1]->id<<";"<<endl;
-        outputed[graph->edges[i]->node[0]->id]=1;
-        outputed[graph->edges[i]->node[1]->id]=1;
-    }
-    for(int i=0;i<graph->nodes.size();i++)
-    {
-        if(outputed[i]==0)
-        {
-            fout<<"v"<<i<<";"<<endl;
-        }
-    }
-    fout<<"}";
-}
-
-//////////////////////////////////////////////////////////////
 //// user defined ////////////////////////////////////////////
 void Graph::DFS()
 {
@@ -386,12 +482,14 @@ bool Graph::DFS_visit(Node *u, PaintColor paintThisWith, SubGraph *tempsubgraph)
     return true;
 }
 
+//Find the color bouding box of the whole graph.
+//Coloring Bounding Box: A smallest bounding box that contains all colored shapes. Note that there is only one coloring bounding box for a given layout design. A coloring bounding box may contain non-colored shapes.
 void Graph::Find_Coloring_Bounding_Box()
 {
     // x0 is the smaller one
     // colorBoundBox[0] = x_left, [1] = x_right, [2] = y_up, [3] = y_down;
-    colorBoundBox[0]=colorBoundBox[3]=DIS_INF;
-    colorBoundBox[1]=colorBoundBox[2]=-DIS_INF;
+    colorBoundBox[0] = colorBoundBox[3] = DIS_INF;
+    colorBoundBox[1] = colorBoundBox[2] = -DIS_INF;
     map<int, Node *>::iterator itN;
     for (itN = nodesMap.begin(); itN != nodesMap.end(); ++itN)
     {
@@ -400,39 +498,32 @@ void Graph::Find_Coloring_Bounding_Box()
         {
             if ( node->x[0] < colorBoundBox[0] )
             {
-                colorBoundBox[0]=node->x[0];
+                colorBoundBox[0] = node->x[0];
             }
             if ( node->x[1] > colorBoundBox[1] )
             {
-                colorBoundBox[1]=node->x[1];
+                colorBoundBox[1] = node->x[1];
             }
             if ( node->y[0] < colorBoundBox[3] )
             {
-                colorBoundBox[3]=node->y[0];
+                colorBoundBox[3] = node->y[0];
             }
             if ( node->y[1] > colorBoundBox[2] )
             {
-                colorBoundBox[2]=node->y[1];
+                colorBoundBox[2] = node->y[1];
             }
         }
     }
     cout << "Find coloring bounding box:\nx0=" << colorBoundBox[0] << " ,x1=" << colorBoundBox[1] << " ,y0=" << colorBoundBox[3] << " ,y1=" << colorBoundBox[2] <<endl;
 }
 
-Window::Window(const int& i, const int& x0, const int& x1, const int& y0, const int& y1)
+//Build the color density windows of the whole graph
+//Color Density Window: It is a square inside a coloring bounding box.
+void Graph::Build_Color_Density_Windows()
 {
-    index = i;
-    leftX = x0;
-    rightX = x1;
-    downY = y0;
-    upY = y1;
-}
-
-void Graph::Build_Color_Dsnsity_Windows()
-{
-    int start_Y=colorBoundBox[3]; // mean the down y of window.
-    int start_X=colorBoundBox[0]; // mean the left x of window.
-    int i=0; // mean the counter of window.
+    int start_Y = colorBoundBox[3]; // mean the bottom y of window.
+    int start_X = colorBoundBox[0]; // mean the left x of window.
+    int i = 0; // mean the counter of window.
     while ( start_Y<colorBoundBox[2] )
     {
         if ( start_Y+omega > colorBoundBox[2] )
@@ -453,10 +544,10 @@ void Graph::Build_Color_Dsnsity_Windows()
             window->addSubGraph(this); // add subgraphes to the window.
 
             i++;
-            start_X+=omega;
+            start_X += omega;
         }
-        start_X=colorBoundBox[0];
-        start_Y+=omega;
+        start_X = colorBoundBox[0];
+        start_Y += omega;
     }
     cout << "\nThere are " << i << " color density windows.\n";
     map<int, Window *>::iterator itN;
@@ -467,56 +558,96 @@ void Graph::Build_Color_Dsnsity_Windows()
     }
 }
 
-void Window::addSubGraph(Graph *graph)
+/*
+ *  For each window in windowsMap
+ *      For each subgraph in window.subGraphInWindow
+ *          //Do DFS find color difference of each SubGraph (subgraph.color_diff) // Done in addSubGraph
+ *          //Check if colored
+ *      //Sum colored nodesSet
+ *      Do Greedy to balance (find minimum color differece, exclude colored nodes)
+ */
+void Graph::Balance_Color() {
+
+    map<int, Window *>::iterator window_iter;
+    // map<int, SubGraph *>::iterator subGraph_iter;
+    for (window_iter = windowsMap.begin(); window_iter != windowsMap.end(); window_iter++) {
+        Window * windowPtr = window_iter->second;
+        /*
+        for (subGraph_iter = windowPtr->subGraphSet.begin(); subGraph_iter != windowPtr->subGraphSet.end(); subGraph_iter++) {
+            DFS_color_diff_subGraph(subGraph_iter->second);
+        }
+        */
+        //Sum colored nodesSet
+
+        //Do Greedy to balance
+        windowPtr->greedyForColorBalancing();
+
+    }
+}
+
+
+//////////////////// End of Graph Methods ////////////////////////////
+
+void Build_Color_Graph(Graph *graph)
 {
-    int k=0; // just a index of subGraphSet.
-    for ( int i=0 ; i < graph->wholeSubGraph.size() ; i++ )
+    graph->sortNodesByID();
+    for(int i = 0;i<graph->nodes.size();i++)
     {
-        for ( int j=0 ; j < graph->wholeSubGraph[i]->subGraphNodes.size() ; j++ )
+        for(int j = i+1;j<graph->nodes.size();j++)
         {
-            Node *thisnode=graph->wholeSubGraph[i]->subGraphNodes[j]; // used to check every node in this subgraph is in this window or not
-            if ( ! ( thisnode->paintConflict ) )
+            int ax1 = graph->nodes[i]->x[0];
+            int ax2 = graph->nodes[i]->x[1];
+            int ay1 = graph->nodes[i]->y[0];
+            int ay2 = graph->nodes[i]->y[1];
+            int bx1 = graph->nodes[j]->x[0];
+            int bx2 = graph->nodes[j]->x[1];
+            int by1 = graph->nodes[j]->y[0];
+            int by2 = graph->nodes[j]->y[1];
+            int alpha = graph->alpha;
+            int beta = graph->beta;
+            if( ( bx1 <= ax1 && bx2 > ax1 ) || ( bx2 >= ax2 && bx1 < ax2) || ( bx1 >= ax1 && bx2 <= ax2 ))
             {
-                if ( ! ( thisnode->x[0] >= rightX || thisnode->x[1] <= leftX ) )
+                if( ( by2 < ay1 && by2 > (ay1-beta) ) || ( by1 > ay2 && by1 < (ay2+beta) ) )
                 {
-                    if ( ! ( thisnode->y[0] >= upY || thisnode->y[1] <= downY ) )
-                    {
-                        // thisnode is 2-paintable and is in this window
-                        subGraphSet[k]=graph->wholeSubGraph[i]; // add the subgraph into the subGraphSet of this window.
-                        int total_red_area=0; // calculate the color difference "in this window",and store it into the subgraph's colorDiff
-                        int total_green_area=0;
-                        for( int l=0 ; l<subGraphSet[k]->subGraphNodes.size() ; l++ )
-                        {
-                            if ( subGraphSet[k]->subGraphNodes[l]->paintColor == RED )
-                            {
-                                total_red_area+=AreaInTheWindow(subGraphSet[k]->subGraphNodes[l]);
-                            }
-                            else
-                            {
-                                total_green_area+=AreaInTheWindow(subGraphSet[k]->subGraphNodes[l]);   
-                            }
-                        }
-                        subGraphSet[k]->colorDiff[index] = ( total_red_area - total_green_area );
-                        k++;
-                    }
+                    graph->addEdge(i,j,1);
+                }
+            }
+            if( ( by1 <= ay1 && by2 > ay1 ) || ( by2 >= ay2 && by1 < ay2) || ( by1 >= ay1 && by2 <= ay2 ))
+            {
+                if( ( bx2 < ax1 && bx2 > (ax1-alpha) ) || ( bx1 > ax2 && bx1 < (ax2+alpha) ) )
+                {
+                    graph->addEdge(i,j,1);
                 }
             }
         }
     }
+    cout<<"Add edges between nodes.\nthere are "<<graph->edges.size()<<" edges\n";
 }
 
-int Window::AreaInTheWindow(Node *u)
+void Output_Graph(Graph * graph,char * filepath)
 {
-    int left=( u->x[0] > leftX ) ? u->x[0] : leftX;
-    int right=( u->x[1] < rightX ) ? u->x[1] : rightX;
-    int up=( u->y[1] < upY ) ? u->y[1] : upY;
-    int down=( u->y[0] > downY ) ? u->y[0] : downY;
-    if ( left < right && down < up )
+    fstream fout;
+    fout.open(filepath,ios::out);//open output file
+    fout<<"// SCC from specific input"<<endl;
+    fout<<"graph {"<<endl;
+    vector<int> outputed;
+    for(int i=0;i<graph->nodes.size();i++)
     {
-        return (up-down)*(right-left);
+        outputed.push_back(0);
     }
-    else
+    for(int i=0;i<graph->edges.size();i++)
     {
-        return 0;
+        fout<<"v"<<graph->edges[i]->node[0]->id<<" -- v"<<graph->edges[i]->node[1]->id<<";"<<endl;
+        outputed[graph->edges[i]->node[0]->id]=1;
+        outputed[graph->edges[i]->node[1]->id]=1;
     }
+    for(int i=0;i<graph->nodes.size();i++)
+    {
+        if(outputed[i]==0)
+        {
+            fout<<"v"<<i<<";"<<endl;
+        }
+    }
+    fout<<"}";
 }
+
