@@ -63,7 +63,7 @@ public:
     SubGraph();
     ~SubGraph();
     
-    map<int ,int> colorDiff; // this means that the color diffetence for different windows. < window->id , colorDiff >. and colordiff is RED-GREEN.
+    map<int ,int> colorDiff; // this means that the color diffetence for different windows. < window->index , colorDiff >. and colordiff is RED-GREEN.
     bool colored; // if colored == true , we should filp the subgraph in the next window
     vector<Node *> subGraphNodes;
     bool flipColor();
