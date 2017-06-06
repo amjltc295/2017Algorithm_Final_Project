@@ -141,6 +141,7 @@ void Window::addSubGraph(Graph *graph)
                         }
                         subGraphSet[k]->colorDiff[index] = ( total_red_area - total_green_area );
                         k++;
+                        break;
                     }
                 }
             }
@@ -306,6 +307,23 @@ void Graph::printGraph()
         cout << "paintConflict = " << node->paintConflict << endl << endl;
     }
 
+}
+
+void Graph::output_unbalanced_color_graph(char * filepath)
+{
+    fstream fout;
+    fout.open(filepath,ios::out);//open output file
+    fout << "ALPHA=" << alpha << endl << "BETA=" << beta << endl << "OMEGA=" << omega << endl << "NoNode=" << nodesMap.size() << endl;
+    map<int, Node *>::iterator it;
+    for ( it = nodesMap.begin() ; it != nodesMap.end() ; it++ )
+    {
+        Node *node = (*it).second;
+        fout << node->x[0] << ',' << node->y[0] << ',' << node->x[1] << ',' << node->y[1] << "," << node->paintColor << endl;
+    }
+    for ( int i=0 ; i<windows.size() ; i++)
+    {
+        fout << windows[i]->leftX << ',' << windows[i]->downY << ',' << windows[i]->rightX << ',' << windows[i]->upY <<endl;
+    }
 }
     
 void Graph::sortEdgesOfNode()
@@ -555,6 +573,19 @@ void Graph::Build_Color_Density_Windows()
     {
         Window *window=(*itN).second;
         cout << "Window " << window->index << " leftX=" << window->leftX << " rightX=" << window->rightX << " downY=" << window->downY << " upY=" << window->upY << endl;
+        cout << "There are "<< window->subGraphSet.size() << " subgraph in this tindow.\n\n";
+        map<int, SubGraph *>::iterator itN2;
+        for (itN2 = window->subGraphSet.begin(); itN2 != window->subGraphSet.end(); ++itN2)
+        {
+            SubGraph *subgraphinwindow=(*itN2).second;
+            cout<<"In subgraph "<<(*itN2).first<<" ";
+            for ( int l=0 ; l< subgraphinwindow->subGraphNodes.size() ; l++ )
+            {
+                cout << " Node " << subgraphinwindow->subGraphNodes[l]->id;
+            }
+            cout << " , color diff=" << subgraphinwindow->colorDiff[window->index]<<endl;
+        }
+        cout<<endl;
     }
 }
 

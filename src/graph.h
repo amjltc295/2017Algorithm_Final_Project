@@ -99,6 +99,7 @@ class Graph{
         void addNode(const int& i, const int& x0, const int& y0, const int& x1, const int& y1);
         void addEdge(const int& v1, const int& v2, const int& w);
         void printGraph();
+        void output_unbalanced_color_graph(char * filepath);
         void sortEdgesOfNode();
         void sortEdgesByWeight();
         void sortNodesByDegree();

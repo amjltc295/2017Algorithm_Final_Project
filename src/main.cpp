@@ -82,7 +82,7 @@ int main(int argc, char* argv[])
     //cout << x0 << ',' << y0 << ',' << x1 << ',' << y1 << endl;
     //graphPtr->printGraph();
     Build_Color_Graph(graphPtr);
-    Output_Graph(graphPtr,argv[2]);
+    // Output_Graph(graphPtr,argv[2]);
         
 
     /*
@@ -111,6 +111,10 @@ int main(int argc, char* argv[])
     graphPtr->Find_Coloring_Bounding_Box();
     graphPtr->Build_Color_Density_Windows();
     graphPtr->Balance_Color();
+    
+    // test only
+    // graphPtr->output_unbalanced_color_graph(argv[2]);
+    // test only
 
     //do color balancing
 
