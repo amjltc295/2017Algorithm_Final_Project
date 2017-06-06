@@ -458,12 +458,25 @@ void Graph::Build_Color_Dsnsity_Windows()
         start_X=colorBoundBox[0];
         start_Y+=omega;
     }
-    cout << "\nThere are " << i << " color density windows.\n";
+    cout << "\nThere are " << i << " color density windows.\n\n";
     map<int, Window *>::iterator itN;
     for (itN = windowsMap.begin(); itN != windowsMap.end(); ++itN)
     {
         Window *window=(*itN).second;
         cout << "Window " << window->index << " leftX=" << window->leftX << " rightX=" << window->rightX << " downY=" << window->downY << " upY=" << window->upY << endl;
+      	cout << "There are "<< window->subGraphSet.size() << " subgraph in this tindow.\n\n";
+      	map<int, SubGraph *>::iterator itN2;
+	    for (itN2 = window->subGraphSet.begin(); itN2 != window->subGraphSet.end(); ++itN2)
+	    {
+	    	SubGraph *subgraphinwindow=(*itN2).second;
+	    	cout<<"In subgraph "<<(*itN2).first<<" ";
+	    	for ( int l=0 ; l< subgraphinwindow->subGraphNodes.size() ; l++ )
+	    	{
+	    		cout << " Node " << subgraphinwindow->subGraphNodes[l]->id;
+	    	}
+	    	cout << " , color diff=" << subgraphinwindow->colorDiff[window->index]<<endl;
+	    }
+	    cout<<endl;
     }
 }
 
@@ -498,6 +511,7 @@ void Window::addSubGraph(Graph *graph)
                         }
                         subGraphSet[k]->colorDiff[index] = ( total_red_area - total_green_area );
                         k++;
+                        break;
                     }
                 }
             }
@@ -520,3 +534,6 @@ int Window::AreaInTheWindow(Node *u)
         return 0;
     }
 }
+
+SubGraph::SubGraph()
+{}
