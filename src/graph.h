@@ -86,6 +86,7 @@ public:
     int index;
     int leftX, rightX;
     int upY, downY;
+    int color_diff_sum;
     map<int, SubGraph *> subGraphSet; // contain all the subgraph in one window.
 };
 
