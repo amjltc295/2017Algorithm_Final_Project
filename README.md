@@ -10,6 +10,27 @@ NTUEE Algorithm 2017 Final Project
 
 Build a graph and see if it's 2-colorable. Try to balance the two color in a color window.
 
+## Directories and Files
+
+```
+ProblemE_test_case/         Officail test cases
+bin/                        Execution file
+lib/                        Supporting library for time usage
+outputs/                    Output folder
+plot_test_case/             Plot out input and output for visualization and debugging
+    fast_balance_plot.sh        Shell to plot all balance-colored outputs
+    fast_plot.sh                Shell to plot all inputs
+    plot_picture.py             Plot all inputs
+    plot_unbalanced.py          Plot all balance-colored outputs
+src/                        Main source file
+    Makefile                    Makefile
+    graph.cpp                   All member functions
+    graph.h                     Header file               
+    main.cpp                    Main function
+Makefile                    Makefile for all
+README.md                   Readme file
+fast_balance.sh             Shell to run all test cases for Linux
+```
 
 ## Psudocode & Algorithm
 
