@@ -1,6 +1,7 @@
 #include "graph.h"
 #include <iostream>
 #include <cassert>
+#include <iomanip>
 using namespace std;
 
 
@@ -206,14 +207,19 @@ struct subGraphCompByColorDiff {
  *
  */
 void Window::greedyForColorBalancing() {
+    cout << endl << "Window " << index << " greedy" << endl;
+    cout << " id "  << setw(8)  << "Area "  << " colored" << endl;
     vector<SubGraph *> color_diff_list;
     //int color_diff_sum = 0;
     color_diff_sum = 0;
     map<int, SubGraph *>::iterator subGraph_iter;
     //Create color_diff_list excluding colored ones
     //Also sum the colorDiff of colored ones
+    int count = 1;
     for (subGraph_iter = subGraphSet.begin(); subGraph_iter != subGraphSet.end(); subGraph_iter++) {
-        cout << subGraph_iter->second-> colorDiff[index] << " " << subGraph_iter->second->colored << endl;
+        cout << setw(3) << count++ << " " 
+            << setw(8) << subGraph_iter->second-> colorDiff[index] <<  " " 
+            << setw(6)<< subGraph_iter->second->colored << endl;
         if (subGraph_iter->second->colored)
             color_diff_sum += subGraph_iter->second->colorDiff[index];
         else {
@@ -229,10 +235,9 @@ void Window::greedyForColorBalancing() {
     sort(color_diff_list.begin(), color_diff_list.end(), subGraphCompByColorDiff(index));
     
     
-    cout << "Window " << index << " greedy" << endl;
     //for ( int i = 0; i < color_diff_list.size(); i++ ) {
     for ( int j = 0; j < color_diff_list.size(); j++ ) {
-        cout << j << " color_diff: " <<  color_diff_list[j]->colorDiff[index] << endl;
+        //cout << j << " color_diff: " <<  color_diff_list[j]->colorDiff[index] << endl;
         if ( color_diff_sum > 0 ) {
             assert(color_diff_list[j]->flipColor());
         }
@@ -636,6 +641,12 @@ void Graph::Balance_Color() {
         cout << "Window " << windowPtr->index << " color_diff_sum: " << windowPtr->color_diff_sum << endl;
 
     }
+    /*
+    map<int, Node *>::iterator node_iter;
+    for (node_iter = nodesMap.begin(); node_iter != nodesMap.end(); node_iter++) {
+        cout << node_iter->first << ", " << node_iter->second->paintColor << endl;
+    }
+    */
 }
 
 

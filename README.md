@@ -29,18 +29,21 @@ Do DFS on Graph
 Find the bondage of color bounding box. (Exclude the conflict subgraphs)
 
 // Graph::Build_Color_Density_Windos()
-Create windowsMap in Graph
+For each window
+    Create windowsMap in Graph
 
     // Window::addSubGraph()
     For each SubGraph in Graph.wholeSubGraphMap
-        Find windows which it belongs to
-        Put each SubGraph into Window.subGraphMap
+        Put each SubGraph into Window.subGraphMap it belongs to
+    Find color difference of each SubGraph in each window (subgraph.color_diff)
 
+    // Graph::Balance_Color()
     For each window in windowsMap
         For each subgraph in window.subGraphInWindow
-            Find color difference of each SubGraph (subgraph.color_diff)
+            Find color difference of each SubGraph (subgraph.color_diff) //Done in addSubGraph
             //Check if colored
         //Sum colored nodesSet //Done in Greedy
+        // Window::greedyForColorBalancing()
         Do Greedy to balance (find minimum color differece, exclude colored nodes)
 
 
@@ -52,13 +55,13 @@ Flip all subGraph with negative colorDiff in color_diff_list
 Sort the color_diff_list
 Let (total color difference in this window) be color_diff_sum
 color_diff_sum = (sum of colorDiff of colored subgraphs)
-//For each_fixed_index = 0 to color_diff_list.size:
-    For i = each_fixed_index to color_diff_list.size:
-        if  (color_diff_sum > 0):
-            filp(subgraph of color_diff_list[i])
-            color_dif_list[i] *= -1
-        color_diff_sum += color_diff_list[i]
-        set subgraph[i] colored
+For i = each_fixed_index to color_diff_list.size:
+    if  (color_diff_sum > 0):
+        // SubGraph::flipColor()
+        filp(subgraph of color_diff_list[i])
+        //color_dif_list[i] *= -1 //Done in SubGraph::flipColor()
+    color_diff_sum += color_diff_list[i]
+    set subgraph[i] colored
 ```
 
 ## Code Example
