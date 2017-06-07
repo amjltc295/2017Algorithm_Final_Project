@@ -10,7 +10,7 @@ NTUEE Algorithm 2017 Final Project
 
 Build a graph and see if it's 2-colorable. Try to balance the two color in a color window.
 
-## Directories and Files
+## Directories & Files
 
 ```
 ProblemE_test_case/         Officail test cases
@@ -30,6 +30,7 @@ src/                        Main source file
 Makefile                    Makefile for all
 README.md                   Readme file
 fast_balance.sh             Shell to run all test cases for Linux
+
 ```
 
 ## Psudocode & Algorithm
@@ -69,7 +70,7 @@ For each window
 
 
 ```
-Greedy
+Greedy // Window::greedyForColorBalancing()
 ```
 Let (list of subgraphs in this window for colorDiff comparison, excluding colored ones) be color_diff_list
 Flip all subGraph with negative colorDiff in color_diff_list
@@ -85,11 +86,6 @@ For i = each_fixed_index to color_diff_list.size:
     set subgraph[i] colored
 ```
 
-## Code Example
-
-~~Show what the library does as concisely as possible, developers should be able to figure out **how** your project solves their problem by looking at the code example. Make sure the API you are showing off is obvious, and that your code is short and concise.~~
-
-
 ## Installation
 
 ```
@@ -99,14 +95,21 @@ make
 ./DPT_balance_color ($input_file_name) ($input_file_name).out
 ```
 
-~~Provide code examples and explanations of how to get the project.~~
-
 ## API Reference
 
 ~~Depending on the size of the project, if it is small and simple enough the reference docs can be added to the README. For medium size to larger projects it is important to at least provide a link to where the API reference docs live.~~
 
 ## Tests
 
+For Linux
+```
+// Indivisual case
+./DPT_balance_color ($input_file_name) ($input_file_name).out
+// To run all test cases
+bash fast_balance.sh
+// To see the result plots
+bash plot_test_case/fast_balance_plot.sh
+```
 ~~Describe and show how to run the tests with code examples.~~
 
 ## Contributors
@@ -118,4 +121,4 @@ Benjamin Kao [kaoben2731] (https://github.com/kaoben2731)
 
 ## License
 
-~~A short snippet describing the license (MIT, Apache, etc.)~~
+MIT
