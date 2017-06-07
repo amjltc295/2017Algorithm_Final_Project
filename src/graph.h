@@ -110,12 +110,13 @@ class Graph{
         void init();
         Node * getNodeById(const int& id);
 
-        // graph travel
-        void DFS();
+        void Build_Color_Graph(); // run for a graph and add edge bewteen nodes if they are too close
+        void DFS();    // graph travel
         bool DFS_visit(Node *u, PaintColor paintThisWith, SubGraph *tempsubgraph);
         void Find_Coloring_Bounding_Box(); // after find whether the nodes are 2 colorable, update the colorBoundBox. 
         void Build_Color_Density_Windows(); // after build the coloring bounding box, add the color density windows.
-        void Balance_Color();
+        void Balance_Color();  //Balance the color of each window using greedy algorithm
+        void Output_Result();
 
         // colorBoundBox[0] = x_left, [1] = x_right, [2] = y_up, [3] = y_down;
         int colorBoundBox[4];
@@ -134,7 +135,7 @@ class Graph{
 };
 
 
-void Build_Color_Graph(Graph *); // run for a graph and add edge bewteen nodes if they are too close
-void Output_Graph(Graph *,char * filepath); // output a .dot file to see if the Build_Color_Graph function runs properly. The dot file contain all nodes and edges between them if they are too close.
+//void Build_Color_Graph(Graph *); // run for a graph and add edge bewteen nodes if they are too close
+void Output_Graph(Graph *, char * filepath); // output a .dot file to see if the Build_Color_Graph function runs properly. The dot file contain all nodes and edges between them if they are too close.
 
 #endif

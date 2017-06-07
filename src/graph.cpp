@@ -466,6 +466,40 @@ Node * Graph::getNodeById(const int& id)
     return nodesMap[id];
 }
 
+void Graph::Build_Color_Graph()
+{
+    sortNodesByID();
+    for(int i = 0; i < nodes.size(); i++)
+    {
+        for(int j = i+1;j<nodes.size();j++)
+        {
+            int ax1 = nodes[i]->x[0];
+            int ax2 = nodes[i]->x[1];
+            int ay1 = nodes[i]->y[0];
+            int ay2 = nodes[i]->y[1];
+            int bx1 = nodes[j]->x[0];
+            int bx2 = nodes[j]->x[1];
+            int by1 = nodes[j]->y[0];
+            int by2 = nodes[j]->y[1];
+            if( ( bx1 <= ax1 && bx2 > ax1 ) || ( bx2 >= ax2 && bx1 < ax2) || ( bx1 >= ax1 && bx2 <= ax2 ))
+            {
+                if( ( by2 < ay1 && by2 > (ay1-beta) ) || ( by1 > ay2 && by1 < (ay2+beta) ) )
+                {
+                    addEdge(i,j,1);
+                }
+            }
+            if( ( by1 <= ay1 && by2 > ay1 ) || ( by2 >= ay2 && by1 < ay2) || ( by1 >= ay1 && by2 <= ay2 ))
+            {
+                if( ( bx2 < ax1 && bx2 > (ax1-alpha) ) || ( bx1 > ax2 && bx1 < (ax2+alpha) ) )
+                {
+                    addEdge(i,j,1);
+                }
+            }
+        }
+    }
+    cout << "Add edges between nodes.\nthere are "<< edges.size() << " edges\n";
+}
+
 //// user defined ////////////////////////////////////////////
 void Graph::DFS()
 {
@@ -649,44 +683,13 @@ void Graph::Balance_Color() {
     */
 }
 
+void Output_Result()
+{
+
+}
 
 //////////////////// End of Graph Methods ////////////////////////////
 
-void Build_Color_Graph(Graph *graph)
-{
-    graph->sortNodesByID();
-    for(int i = 0;i<graph->nodes.size();i++)
-    {
-        for(int j = i+1;j<graph->nodes.size();j++)
-        {
-            int ax1 = graph->nodes[i]->x[0];
-            int ax2 = graph->nodes[i]->x[1];
-            int ay1 = graph->nodes[i]->y[0];
-            int ay2 = graph->nodes[i]->y[1];
-            int bx1 = graph->nodes[j]->x[0];
-            int bx2 = graph->nodes[j]->x[1];
-            int by1 = graph->nodes[j]->y[0];
-            int by2 = graph->nodes[j]->y[1];
-            int alpha = graph->alpha;
-            int beta = graph->beta;
-            if( ( bx1 <= ax1 && bx2 > ax1 ) || ( bx2 >= ax2 && bx1 < ax2) || ( bx1 >= ax1 && bx2 <= ax2 ))
-            {
-                if( ( by2 < ay1 && by2 > (ay1-beta) ) || ( by1 > ay2 && by1 < (ay2+beta) ) )
-                {
-                    graph->addEdge(i,j,1);
-                }
-            }
-            if( ( by1 <= ay1 && by2 > ay1 ) || ( by2 >= ay2 && by1 < ay2) || ( by1 >= ay1 && by2 <= ay2 ))
-            {
-                if( ( bx2 < ax1 && bx2 > (ax1-alpha) ) || ( bx1 > ax2 && bx1 < (ax2+alpha) ) )
-                {
-                    graph->addEdge(i,j,1);
-                }
-            }
-        }
-    }
-    cout<<"Add edges between nodes.\nthere are "<<graph->edges.size()<<" edges\n";
-}
 
 void Output_Graph(Graph * graph,char * filepath)
 {
