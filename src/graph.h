@@ -64,6 +64,7 @@ public:
     SubGraph();
     ~SubGraph();
     
+    void IsColflict(); // when doing DFS and find out there are color conflict, set paintConflict=True for all nodes in this subgraph.
     map<int ,int> colorDiff; // this means that the color diffetence for different windows. < window->index , colorDiff >. and colordiff is RED-GREEN.
     bool colored; // if colored == true , we should filp the subgraph in the next window
     vector<Node *> subGraphNodes;

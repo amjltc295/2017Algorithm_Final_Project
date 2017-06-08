@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
         i++;
     }
     //cout << x0 << ',' << y0 << ',' << x1 << ',' << y1 << endl;
-    //graphPtr->printGraph();
+    // graphPtr->printGraph();
     graphPtr->Build_Color_Graph();
     // Output_Graph(graphPtr,argv[2]);
         

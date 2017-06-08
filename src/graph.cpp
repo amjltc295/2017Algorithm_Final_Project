@@ -75,6 +75,14 @@ SubGraph::SubGraph()
     colored = false;
 }
 
+void SubGraph::IsColflict()
+{
+    for(int i = 0; i < subGraphNodes.size(); i++)
+    {
+        subGraphNodes[i]->paintConflict = true;
+    }
+}
+
 bool SubGraph::flipColor()
 {
     if (colored)
@@ -541,6 +549,7 @@ void Graph::DFS()
             if (DFS_visit(node, RED, tempsubgraph) == false) {
                 node->paintConflict = true;
                 //non2ColorableSubGraph.push_back(tempsubgraph);
+                tempsubgraph->IsColflict();
             }
             else
             {
