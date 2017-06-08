@@ -109,6 +109,9 @@ Window::Window(const int& i, const int& x0, const int& x1, const int& y0, const 
     rightX = x1;
     downY = y0;
     upY = y1;
+    color_diff_sum = 0;
+    color_A_density = 0;
+    color_B_density = 0;
 }
 
 //Add subgraph (a node set) to the window and calculate its colorDiff
@@ -173,6 +176,28 @@ int Window::AreaInTheWindow(Node *u)
     }
 }
 
+void Window::calculateColorDensity() 
+{
+    int U = (rightX - leftX) * (upY - downY); // the area of the color density window
+    int CA = 0; // the total area of RED-colored shapes in a color density window (excluding the portion outside the color density window))
+    int CB = 0; // the total area of GREEN-colored shapes in a color density window (excluding the portion outside the color density window))
+    map<int, SubGraph *>::iterator subGraph_iter;
+    for (subGraph_iter = subGraphSet.begin(); subGraph_iter != subGraphSet.end(); subGraph_iter++){
+        SubGraph * subGraphPtr = subGraph_iter->second;
+        for (int i = 0; i < subGraphPtr->subGraphNodes.size(); i++) {
+            Node * nodePtr = subGraphPtr->subGraphNodes[i];
+            int nodeArea = AreaInTheWindow(nodePtr);
+            U += nodeArea;
+            assert(nodePtr->paintColor == RED || nodePtr->paintColor == GREEN);
+            if (nodePtr->paintColor == RED)
+                CA += nodeArea;
+            else
+                CB += nodeArea;
+        }
+    }
+    color_A_density = (float)CA / (float)U * 100;
+    color_B_density = (float)CB / (float)U * 100;
+}
 
 struct subGraphCompByColorDiff {
     subGraphCompByColorDiff (const int windowIndex){
@@ -514,6 +539,7 @@ void Graph::DFS()
         if (node->color == WHITE) {
             if (DFS_visit(node, RED, tempsubgraph) == false) {
                 node->paintConflict = true;
+                //non2ColorableSubGraph.push_back(tempsubgraph);
             }
             else
             {
@@ -542,7 +568,7 @@ bool Graph::DFS_visit(Node *u, PaintColor paintThisWith, SubGraph *tempsubgraph)
         if (v->color == WHITE)
         {
             v->prev = u;
-            PaintColor colorForNext = (paintThisWith == RED)? GREEN : RED; // pass diff color to next node
+            PaintColor colorForNext = (paintThisWith == RED) ? GREEN : RED; // pass diff color to next node
             if (DFS_visit(v, colorForNext, tempsubgraph) == false) {
                 u->paintConflict = true;
                 return false;
@@ -683,9 +709,86 @@ void Graph::Balance_Color() {
     */
 }
 
-void Output_Result()
+void Graph::Output_Result()
 {
+    
+    map<int, Window *>::iterator window_iter;
+    map<int, SubGraph *>::iterator subGraph_iter;
 
+    // WIN[d]=x_bottom_leftd ,y_bottom_leftd ,x_top_rightd ,y_top_rightd(color_A_densityd color_B_densityd)
+    // ...
+    for (window_iter = windowsMap.begin(); window_iter != windowsMap.end(); window_iter++) {
+        Window * windowPtr = window_iter->second;
+        windowPtr->calculateColorDensity();
+        cout << "WIN[" << windowPtr->index << "]=" 
+            << windowPtr->leftX << ","
+            << windowPtr->downY << ","
+            << windowPtr->rightX << ","
+            << windowPtr->upY << "("
+            << setprecision(2) << fixed << windowPtr->color_A_density << " "
+            << setprecision(2) << fixed << windowPtr->color_B_density << ")"
+            << endl;
+    }
+
+    /*
+    for (int i = 0; i < non2ColorableSubGraph.size(); i++) {
+        SubGraph * subGraphPtr = non2ColorableSubGraph[i];
+        cout << "NO[" << i+1 << "]=" << 
+    }
+    */
+    cout << "GROUP" << endl;
+    // NO[i]=x_bottom_lefti ,y_bottom_lefti ,x_top_righti ,y_top_righti
+    // ...
+    int count = 1;
+    bool noConflict = true;
+    for (int i = 0; i < nodes.size(); i++) {
+        if (nodes[i]->paintConflict) {
+            cout << "NO[" << count << "]=" 
+                << nodes[i]->x[0] << ","
+                << nodes[i]->y[0] << ","
+                << nodes[i]->x[1] << ","
+                << nodes[i]->y[1] 
+                << endl;
+
+            count ++;
+        }
+    }
+    // CA[a]=x_bottom_lefta ,y_bottom_lefta ,x_top_righta ,y_top_righta
+    // ...
+    // CB[b]=x_bottom_leftb ,y_bottom_leftb ,x_top_rightb ,y_top_rightb
+    // ...
+    for (window_iter = windowsMap.begin(); window_iter != windowsMap.end(); window_iter++) {
+        cout << "GROUP" << endl;
+        Window * windowPtr = window_iter->second;
+        count = 1;
+
+        for (int c = RED; c <= GREEN; c++) {
+            for (subGraph_iter = windowPtr->subGraphSet.begin(); subGraph_iter != windowPtr->subGraphSet.end(); subGraph_iter++){
+                SubGraph * subGraphPtr = subGraph_iter->second;
+                for (int i = 0; i < subGraphPtr->subGraphNodes.size(); i++) {
+                    Node * nodePtr = subGraphPtr->subGraphNodes[i];
+                    if (nodePtr->paintColor == c){
+                        char t = ( (c == RED) ? 'A' : 'B' );
+                        cout << "C" << t  << "[" << count << "]="
+                            << nodePtr->x[0] << ","
+                            << nodePtr->y[0] << ","
+                            << nodePtr->x[1] << ","
+                            << nodePtr->y[1] 
+                            << endl;
+                        count ++;
+                    }
+                }
+            }
+            count = 1;
+        }
+
+    }
+    /*
+    map<int, Node *>::iterator node_iter;
+    for (node_iter = nodesMap.begin(); node_iter != nodesMap.end(); node_iter++) {
+        cout << node_iter->first << ", " << node_iter->second->paintColor << endl;
+
+    */
 }
 
 //////////////////// End of Graph Methods ////////////////////////////

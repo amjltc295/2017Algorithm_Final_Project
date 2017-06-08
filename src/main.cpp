@@ -111,6 +111,7 @@ int main(int argc, char* argv[])
     graphPtr->Find_Coloring_Bounding_Box();
     graphPtr->Build_Color_Density_Windows();
     graphPtr->Balance_Color();
+    graphPtr->Output_Result();
     
     // test only
     graphPtr->output_unbalanced_color_graph(argv[2]);

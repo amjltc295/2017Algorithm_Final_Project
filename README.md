@@ -68,6 +68,11 @@ For each window
         // Window::greedyForColorBalancing()
         Do Greedy to balance (find minimum color differece, exclude colored nodes)
 
+// Graph::Output_Result()
+For each window
+    // Window::calculateColorDensity
+    calcualte the color density
+    print out the nodes with none, RED and Green color
 
 ```
 Greedy // Window::greedyForColorBalancing()

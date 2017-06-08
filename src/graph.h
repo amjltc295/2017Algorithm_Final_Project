@@ -30,7 +30,7 @@ class Edge{
 
 // enumeration declartion
 enum Color { WHITE, GRAY, BLACK };
-enum PaintColor { NON_PAINTED, RED, GREEN };
+enum PaintColor { NON_PAINTED, RED, GREEN};
 
 class Node{
 
@@ -80,6 +80,7 @@ public:
     ~Window();
     void addSubGraph(Graph *graph);
     int AreaInTheWindow(Node *u); //return the area of node u in this window.
+    void calculateColorDensity();
 //    bool subGraphCompByColorDiff(const SubGraph *A, const SubGraph *B);
     void greedyForColorBalancing();
 
@@ -87,6 +88,8 @@ public:
     int leftX, rightX;
     int upY, downY;
     int color_diff_sum;
+    float color_A_density; //A is Red
+    float color_B_density; //B is Green
     map<int, SubGraph *> subGraphSet; // contain all the subgraph in one window.
 };
 
@@ -129,6 +132,7 @@ class Graph{
         vector<int> X_SortedNodeList; // list contain the ids of nodes sorted by x0 (left x)
         vector<int> Y_SortedNodeList; // list contain the ids of nodes sorted by y0 (down y)
         vector<SubGraph *> wholeSubGraph;
+        vector<SubGraph *> non2ColorableSubGraph;
         int alpha;
         int beta;
         int omega;
