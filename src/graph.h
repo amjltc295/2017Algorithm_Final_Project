@@ -49,6 +49,7 @@ class Node{
 
         bool colored; // if colored == true, skip balancing step.
         bool paintConflict; // paintConflict == true --> the subgraph cannot be paint with two color.
+        bool inColorDensityWindow;
         vector<Edge *> edge;
 
         int d;

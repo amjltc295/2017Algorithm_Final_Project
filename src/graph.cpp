@@ -45,6 +45,7 @@ Node::Node(const int& i, const int& x0, const int& y0, const int& x1, const int&
     x[1] = x1;
     y[1] = y1;
     paintConflict = false; // valid = 1 means this subgraph is colorable
+    inColorDensityWindow = false;
     color = WHITE;
     paintColor = NON_PAINTED;
     colored = false; // colored == 1 --> be colored yet
@@ -619,6 +620,20 @@ void Graph::Find_Coloring_Bounding_Box()
         }
     }
     cout << "Find coloring bounding box:\nx0=" << colorBoundBox[0] << " ,x1=" << colorBoundBox[1] << " ,y0=" << colorBoundBox[3] << " ,y1=" << colorBoundBox[2] <<endl;
+    // Exclude the node outside the color bounding box
+    for (itN = nodesMap.begin(); itN != nodesMap.end(); ++itN)
+    {
+        Node * nodePtr = (*itN).second;
+        if (nodePtr->x[0] > colorBoundBox[1]
+                || nodePtr->x[1] < colorBoundBox[0]
+                || nodePtr->y[0] > colorBoundBox[2]
+                || nodePtr->y[1] < colorBoundBox[3]) {
+            nodePtr->inColorDensityWindow = false;
+        }
+        else {
+            nodePtr->inColorDensityWindow = true;
+        }
+    }
 }
 
 //Build the color density windows of the whole graph
@@ -742,7 +757,7 @@ void Graph::Output_Result()
     int count = 1;
     bool noConflict = true;
     for (int i = 0; i < nodes.size(); i++) {
-        if (nodes[i]->paintConflict) {
+        if ( !nodes[i]->inColorDensityWindow ) {
             cout << "NO[" << count << "]=" 
                 << nodes[i]->x[0] << ","
                 << nodes[i]->y[0] << ","
