@@ -37,8 +37,8 @@ int main(int argc, char* argv[])
 
     char buffer[200];
     fstream fin(argv[1]);
-    // fstream fout;
-    //fout.open(argv[3],ios::out);
+    fstream fout;
+    fout.open(argv[2],ios::out);
     
     //Read alpha, beta, omega from the first three lines
     //For example: 
@@ -91,11 +91,11 @@ int main(int argc, char* argv[])
     graphPtr->Find_Coloring_Bounding_Box();
     graphPtr->Build_Color_Density_Windows();
     graphPtr->Balance_Color();
-    graphPtr->Output_Result();
-    
-    // test only
+    #ifndef DEBUG
+    graphPtr->Output_Result(argv[2]);
+    #else    
     graphPtr->output_unbalanced_color_graph(argv[2]);
-    // test only
+    #endif
 
     //do color balancing
 

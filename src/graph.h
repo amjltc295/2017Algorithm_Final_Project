@@ -121,7 +121,7 @@ class Graph{
         void Find_Coloring_Bounding_Box(); // after find whether the nodes are 2 colorable, update the colorBoundBox. 
         void Build_Color_Density_Windows(); // after build the coloring bounding box, add the color density windows.
         void Balance_Color();  //Balance the color of each window using greedy algorithm
-        void Output_Result();
+        void Output_Result(char * filename);
 
         // colorBoundBox[0] = x_left, [1] = x_right, [2] = y_up, [3] = y_down;
         int colorBoundBox[4];
