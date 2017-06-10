@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cassert>
 #include <iomanip>
+#include <string>
 using namespace std;
 
 //#define DEBUG
@@ -757,9 +758,11 @@ void Graph::Balance_Color()
     */
 }
 
-void Graph::Output_Result()
+void Graph::Output_Result(char * filename)
 {
-    
+    fstream fout;
+    fout.open(filename, ios::out);//open output file
+
     cout << "Outputing resulting ... " << endl << endl;
     map<int, Window *>::iterator window_iter;
     map<int, SubGraph *>::iterator subGraph_iter;
@@ -769,7 +772,7 @@ void Graph::Output_Result()
     for (window_iter = windowsMap.begin(); window_iter != windowsMap.end(); window_iter++) {
         Window * windowPtr = window_iter->second;
         windowPtr->calculateColorDensity();
-        cout << "WIN[" << windowPtr->index << "]=" 
+        fout << "WIN[" << windowPtr->index << "]=" 
             << windowPtr->leftX << ","
             << windowPtr->downY << ","
             << windowPtr->rightX << ","
@@ -782,17 +785,17 @@ void Graph::Output_Result()
     /*
     for (int i = 0; i < non2ColorableSubGraph.size(); i++) {
         SubGraph * subGraphPtr = non2ColorableSubGraph[i];
-        cout << "NO[" << i+1 << "]=" << 
+        fout << "NO[" << i+1 << "]=" << 
     }
     */
-    cout << "GROUP" << endl;
+    fout << "GROUP" << endl;
     // NO[i]=x_bottom_lefti ,y_bottom_lefti ,x_top_righti ,y_top_righti
     // ...
     int count = 1;
     bool noConflict = true;
     for (int i = 0; i < nodes.size(); i++) {
         if ( !nodes[i]->inColorDensityWindow ) {
-            cout << "NO[" << count << "]=" 
+            fout << "NO[" << count << "]=" 
                 << nodes[i]->x[0] << ","
                 << nodes[i]->y[0] << ","
                 << nodes[i]->x[1] << ","
@@ -808,7 +811,7 @@ void Graph::Output_Result()
     // ...
     int subGraphSize = wholeSubGraph.size();
     for (int i = 0; i < subGraphSize; i++) {
-        cout << "GROUP" << endl;
+        fout << "GROUP" << endl;
         for (int c = RED; c <= GREEN; c++) {
             count = 1;
             SubGraph * subGraphPtr = wholeSubGraph[i];
@@ -816,7 +819,7 @@ void Graph::Output_Result()
                 Node * nodePtr = subGraphPtr->subGraphNodes[j];
                 if (nodePtr->paintColor == c){
                     char t = ( (c == RED) ? 'A' : 'B' );
-                    cout << "C" << t  << "[" << count << "]="
+                    fout << "C" << t  << "[" << count << "]="
                         << nodePtr->x[0] << ","
                         << nodePtr->y[0] << ","
                         << nodePtr->x[1] << ","
@@ -831,9 +834,18 @@ void Graph::Output_Result()
     /*
     map<int, Node *>::iterator node_iter;
     for (node_iter = nodesMap.begin(); node_iter != nodesMap.end(); node_iter++) {
-        cout << node_iter->first << ", " << node_iter->second->paintColor << endl;
+        fout << node_iter->first << ", " << node_iter->second->paintColor << endl;
 
     */
+    fout.close();
+    string line;
+    fstream myfile (filename);
+    if (myfile.is_open()) {
+        while ( getline (myfile,line) ) {
+            cout << line << '\n';
+        }
+        myfile.close();
+    }
 }
 
 //////////////////// End of Graph Methods ////////////////////////////
@@ -864,5 +876,6 @@ void Output_Graph(Graph * graph,char * filepath)
         }
     }
     fout<<"}";
+    fout.close();
 }
 
