@@ -14,6 +14,7 @@
 #include "graph.h"
 //#include "color_balance_greedy.h"
 
+
 using namespace std;
 using namespace CommonNs;
 
@@ -59,7 +60,7 @@ int main(int argc, char* argv[])
     omega = atoi(buffer);
 
 
-    //Read coordinates starting from the fourth line.
+    ///////// Read coordinates starting from the fourth line. //////////////
     //x0,y0,x1,y1, where x0 and y0 are the smaller ones.
     //For example:
     //0,200,185,260
@@ -79,35 +80,14 @@ int main(int argc, char* argv[])
         graphPtr->addNode(i, x0, y0, x1, y1);
         i++;
     }
-    //cout << x0 << ',' << y0 << ',' << x1 << ',' << y1 << endl;
-    // graphPtr->printGraph();
-    graphPtr->Build_Color_Graph();
-    // Output_Graph(graphPtr,argv[2]);
-        
+    ////////// End of read file /////////
 
-    /*
-    int capacity, numOfFood;
-    fin >> capacity >> numOfFood;
-    workerAntSolver.setCapacity(capacity);
-    workerAntSolver.setNumOfFood(numOfFood);
-    for (int i=0; i<numOfFood; i++) {
-        int x, y, w;
-        vector<int> food;
-        fin >> x >> y >> w;
-        food.push_back(x); food.push_back(y); food.push_back(w);
-        workerAntSolver.appendFood(food);
-    }
-    //workerAntSolver.printData();
-    */
-
-    //////////// find the solution to pick up the food ////
     tmusg.periodStart();
-
-    // test only
-    cout << "Painting conflict detection with DFS....." << endl;
-    // test only
+    graphPtr->Build_Color_Graph();
     graphPtr->DFS();
+    #ifdef DEBUG
     graphPtr->printGraph();
+    #endif
     graphPtr->Find_Coloring_Bounding_Box();
     graphPtr->Build_Color_Density_Windows();
     graphPtr->Balance_Color();
@@ -132,6 +112,7 @@ int main(int argc, char* argv[])
     fin.close();
     //fout.close();
 
+    cout << endl;
     cout <<"# run time = " << (stat.uTime + stat.sTime) / 1000000.0 << "sec" << endl;
     cout <<"# memory =" << stat.vmPeak / 1000.0 << "MB" << endl;
     return 0;

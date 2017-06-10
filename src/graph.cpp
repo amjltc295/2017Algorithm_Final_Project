@@ -4,6 +4,12 @@
 #include <iomanip>
 using namespace std;
 
+//#define DEBUG
+#ifdef DEBUG
+#define DEBUG_MSG(str) do { cout << str; } while( false )
+#else
+#define DEBUG_MSG(str) do { } while ( false )
+#endif
 
 Edge::Edge(Node *a, Node *b, const int& w)
 {
@@ -196,7 +202,7 @@ void Window::calculateColorDensity()
         for (int i = 0; i < subGraphPtr->subGraphNodes.size(); i++) {
             Node * nodePtr = subGraphPtr->subGraphNodes[i];
             int nodeArea = AreaInTheWindow(nodePtr);
-            U += nodeArea;
+            //cout << "\tNode " << nodePtr->id << ", color " << nodePtr->paintColor << ", area" << nodeArea << endl;
             assert(nodePtr->paintColor == RED || nodePtr->paintColor == GREEN);
             if (nodePtr->paintColor == RED)
                 CA += nodeArea;
@@ -206,6 +212,7 @@ void Window::calculateColorDensity()
     }
     color_A_density = (float)CA / (float)U * 100;
     color_B_density = (float)CB / (float)U * 100;
+    //cout << "Calculate Color Density of window " << index << ": CA " << CA << ", CB " << CB << ", U " << U << endl;
 }
 
 struct subGraphCompByColorDiff {
@@ -241,8 +248,8 @@ struct subGraphCompByColorDiff {
  *
  */
 void Window::greedyForColorBalancing() {
-    cout << endl << "Window " << index << " greedy" << endl;
-    cout << " id "  << setw(8)  << "Area "  << " colored" << endl;
+    DEBUG_MSG("\tWindow " << index << " greedy" << endl);
+    DEBUG_MSG(" \tid "  << setw(8)  << "Area "  << " colored" << endl);
     vector<SubGraph *> color_diff_list;
     //int color_diff_sum = 0;
     color_diff_sum = 0;
@@ -251,9 +258,9 @@ void Window::greedyForColorBalancing() {
     //Also sum the colorDiff of colored ones
     int count = 1;
     for (subGraph_iter = subGraphSet.begin(); subGraph_iter != subGraphSet.end(); subGraph_iter++) {
-        cout << setw(3) << count++ << " " 
+        DEBUG_MSG( "\t" << setw(3) << count++ << " " 
             << setw(8) << subGraph_iter->second-> colorDiff[index] <<  " " 
-            << setw(6)<< subGraph_iter->second->colored << endl;
+            << setw(6)<< subGraph_iter->second->colored << endl);
         if (subGraph_iter->second->colored)
             color_diff_sum += subGraph_iter->second->colorDiff[index];
         else {
@@ -363,8 +370,12 @@ void Graph::printGraph()
     for ( it = nodesMap.begin() ; it != nodesMap.end() ; it++ )
     {
         Node *node = (*it).second;
-        cout << "Node v" << node->id << ": x1=" << node->x[0] << ',' << "y1=" << node->y[0] << ',' << "x2=" << node->x[1] << ',' <<"y2=" << node->y[1] << endl;
-        cout << "paintConflict = " << node->paintConflict << endl << endl;
+        cout << "Node v" << node->id 
+            << ": x1=" << node->x[0] << ", " 
+            << "y1=" << node->y[0] << ", "
+            << "x2=" << node->x[1] << ", " 
+            <<"y2=" << node->y[1] << ", "
+            << "paintConflict=" << node->paintConflict << endl;
     }
 
 }
@@ -502,6 +513,7 @@ Node * Graph::getNodeById(const int& id)
 
 void Graph::Build_Color_Graph()
 {
+    cout << "Building graph ..." << endl;
     sortNodesByID();
     for(int i = 0; i < nodes.size(); i++)
     {
@@ -531,12 +543,13 @@ void Graph::Build_Color_Graph()
             }
         }
     }
-    cout << "Add edges between nodes.\nthere are "<< edges.size() << " edges\n";
+    DEBUG_MSG("\tAdd edges between nodes. There are "<< edges.size() << " edges" << endl);
 }
 
 //// user defined ////////////////////////////////////////////
 void Graph::DFS()
 {
+    cout << "Detecting non-2-colorable subgraphs with DFS....." << endl;
     int i=0; // this just a index of wholeSubGraphMap.
     Graph::init();
     map<int, Node *>::iterator itN;
@@ -600,6 +613,7 @@ bool Graph::DFS_visit(Node *u, PaintColor paintThisWith, SubGraph *tempsubgraph)
 //Coloring Bounding Box: A smallest bounding box that contains all colored shapes. Note that there is only one coloring bounding box for a given layout design. A coloring bounding box may contain non-colored shapes.
 void Graph::Find_Coloring_Bounding_Box()
 {
+    cout << "Finding Coloring Bounding Box ... " << endl;
     // x0 is the smaller one
     // colorBoundBox[0] = x_left, [1] = x_right, [2] = y_up, [3] = y_down;
     colorBoundBox[0] = colorBoundBox[3] = DIS_INF;
@@ -628,8 +642,12 @@ void Graph::Find_Coloring_Bounding_Box()
             }
         }
     }
-    cout << "Find coloring bounding box:\nx0=" << colorBoundBox[0] << " ,x1=" << colorBoundBox[1] << " ,y0=" << colorBoundBox[3] << " ,y1=" << colorBoundBox[2] <<endl;
+    DEBUG_MSG( "\t Coloring Bounding Box: x0=" << colorBoundBox[0] 
+            << " ,x1=" << colorBoundBox[1] 
+            << " ,y0=" << colorBoundBox[3] 
+            << " ,y1=" << colorBoundBox[2] <<endl);
     // Exclude the node outside the color bounding box
+    DEBUG_MSG("Excluding node outside the Color Bounding Box ..." << endl);
     for (itN = nodesMap.begin(); itN != nodesMap.end(); ++itN)
     {
         Node * nodePtr = (*itN).second;
@@ -649,6 +667,7 @@ void Graph::Find_Coloring_Bounding_Box()
 //Color Density Window: It is a square inside a coloring bounding box.
 void Graph::Build_Color_Density_Windows()
 {
+    cout << "Building Color Density Windows ... " << endl;
     int start_Y = colorBoundBox[3]; // mean the bottom y of window.
     int start_X = colorBoundBox[0]; // mean the left x of window.
     int i = 0; // mean the counter of window.
@@ -677,25 +696,29 @@ void Graph::Build_Color_Density_Windows()
         start_X = colorBoundBox[0];
         start_Y += omega;
     }
-    cout << "\nThere are " << i << " color density windows.\n";
+    DEBUG_MSG("\tThere are " << i << " Color Density Windows." << endl);
     map<int, Window *>::iterator itN;
     for (itN = windowsMap.begin(); itN != windowsMap.end(); ++itN)
     {
         Window *window=(*itN).second;
-        cout << "Window " << window->index << " leftX=" << window->leftX << " rightX=" << window->rightX << " downY=" << window->downY << " upY=" << window->upY << endl;
-        cout << "There are "<< window->subGraphSet.size() << " subgraph in this tindow.\n\n";
+        DEBUG_MSG("\t\tWindow " << window->index
+                << " leftX=" << window->leftX 
+                << " rightX=" << window->rightX
+                << " downY=" << window->downY 
+                << " upY=" << window->upY << endl);
+        DEBUG_MSG("\t\tThere are "<< window->subGraphSet.size() << " subgraph in this tindow: " << endl);
         map<int, SubGraph *>::iterator itN2;
         for (itN2 = window->subGraphSet.begin(); itN2 != window->subGraphSet.end(); ++itN2)
         {
             SubGraph *subgraphinwindow=(*itN2).second;
-            cout<<"In subgraph "<<(*itN2).first<<" ";
+            DEBUG_MSG("\t\t\tIn subgraph "<<(*itN2).first<<" ");
             for ( int l=0 ; l< subgraphinwindow->subGraphNodes.size() ; l++ )
             {
-                cout << " Node " << subgraphinwindow->subGraphNodes[l]->id;
+                DEBUG_MSG(" Node " << subgraphinwindow->subGraphNodes[l]->id);
             }
-            cout << " , color diff=" << subgraphinwindow->colorDiff[window->index]<<endl;
+            DEBUG_MSG(" , color diff=" << subgraphinwindow->colorDiff[window->index]<<endl);
         }
-        cout<<endl;
+        DEBUG_MSG(endl);
     }
 }
 
@@ -707,8 +730,9 @@ void Graph::Build_Color_Density_Windows()
  *      //Sum colored nodesSet
  *      Do Greedy to balance (find minimum color differece, exclude colored nodes)
  */
-void Graph::Balance_Color() {
-
+void Graph::Balance_Color()
+{
+    cout << "Balancing Color for each window ... " << endl;
     map<int, Window *>::iterator window_iter;
     // map<int, SubGraph *>::iterator subGraph_iter;
     for (window_iter = windowsMap.begin(); window_iter != windowsMap.end(); window_iter++) {
@@ -722,7 +746,7 @@ void Graph::Balance_Color() {
 
         //Do Greedy to balance
         windowPtr->greedyForColorBalancing();
-        cout << "Window " << windowPtr->index << " color_diff_sum: " << windowPtr->color_diff_sum << endl;
+        DEBUG_MSG("\tWindow " << windowPtr->index << " color_diff_sum: " << windowPtr->color_diff_sum << endl);
 
     }
     /*
@@ -736,6 +760,7 @@ void Graph::Balance_Color() {
 void Graph::Output_Result()
 {
     
+    cout << "Outputing resulting ... " << endl << endl;
     map<int, Window *>::iterator window_iter;
     map<int, SubGraph *>::iterator subGraph_iter;
 
@@ -781,29 +806,25 @@ void Graph::Output_Result()
     // ...
     // CB[b]=x_bottom_leftb ,y_bottom_leftb ,x_top_rightb ,y_top_rightb
     // ...
-    for (window_iter = windowsMap.begin(); window_iter != windowsMap.end(); window_iter++) {
+    int subGraphSize = wholeSubGraph.size();
+    for (int i = 0; i < subGraphSize; i++) {
         cout << "GROUP" << endl;
-        Window * windowPtr = window_iter->second;
-        count = 1;
-
         for (int c = RED; c <= GREEN; c++) {
-            for (subGraph_iter = windowPtr->subGraphSet.begin(); subGraph_iter != windowPtr->subGraphSet.end(); subGraph_iter++){
-                SubGraph * subGraphPtr = subGraph_iter->second;
-                for (int i = 0; i < subGraphPtr->subGraphNodes.size(); i++) {
-                    Node * nodePtr = subGraphPtr->subGraphNodes[i];
-                    if (nodePtr->paintColor == c){
-                        char t = ( (c == RED) ? 'A' : 'B' );
-                        cout << "C" << t  << "[" << count << "]="
-                            << nodePtr->x[0] << ","
-                            << nodePtr->y[0] << ","
-                            << nodePtr->x[1] << ","
-                            << nodePtr->y[1] 
-                            << endl;
-                        count ++;
-                    }
+            count = 1;
+            SubGraph * subGraphPtr = wholeSubGraph[i];
+            for (int j = 0; j < subGraphPtr->subGraphNodes.size(); j++) {
+                Node * nodePtr = subGraphPtr->subGraphNodes[j];
+                if (nodePtr->paintColor == c){
+                    char t = ( (c == RED) ? 'A' : 'B' );
+                    cout << "C" << t  << "[" << count << "]="
+                        << nodePtr->x[0] << ","
+                        << nodePtr->y[0] << ","
+                        << nodePtr->x[1] << ","
+                        << nodePtr->y[1] 
+                        << endl;
+                    count ++;
                 }
             }
-            count = 1;
         }
 
     }

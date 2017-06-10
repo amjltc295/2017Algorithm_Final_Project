@@ -3,7 +3,12 @@ ARFLAGS  := cr
 CXX      := g++
 CPPFLAGS := -O2 -I../lib
 
-all : ../bin/DPT_balance_color
+all : executable
+
+debug: CPPFLAGS += -DDEBUG -g
+debug: executable
+
+executable : ../bin/DPT_balance_color
 	@echo -n ""
 
 clean :
