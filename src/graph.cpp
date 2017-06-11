@@ -449,45 +449,127 @@ void Graph::sortNodesByID()
     sort(nodes.begin(), nodes.end(), NodeCompByID);
 }
 
-bool NodeCompByX0( const Node* A, const Node* B )
-{
-    if ( A->x[0] < B->x[0] )
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
 void Graph::sortNodesByX0()
 {
-    sort(nodes.begin(), nodes.end(), NodeCompByX0);
-    for ( int i=0 ; i < nodes.size() ; i++ )
+    map<int, Node *>::iterator itN;
+    map<int, vector<Node *> >::iterator itN2;
+    for ( itN = nodesMap.begin() ; itN != nodesMap.end() ; itN++ )
     {
-        X_SortedNodeList.push_back(nodes[i]->id);
+        Node *node = (*itN).second;
+        itN2 = X0_SortedNodeMap.find(node->x[0]);
+        if(itN2 == X0_SortedNodeMap.end())
+        {
+            vector<Node *> tempvector;
+            tempvector.push_back(node);
+            X0_SortedNodeMap[node->x[0]] = tempvector;
+        }
+        else
+        {
+            X0_SortedNodeMap[node->x[0]].push_back(node);
+        }
+    }
+    DEBUG_MSG("sort by X0, and there are "<< X0_SortedNodeMap.size() <<" different X0.\n");
+    for ( itN2 = X0_SortedNodeMap.begin() ; itN2 != X0_SortedNodeMap.end() ; itN2++ )
+    {
+        vector<Node *> tempvector = (*itN2).second;
+        DEBUG_MSG("X0="<< (*itN2).first <<endl);
+        for(int i=0 ; i < tempvector.size() ; i++)
+        {
+            DEBUG_MSG("\tnode"<<tempvector[i]->id<<endl);
+        }
     }
 }
 
-bool NodeCompByY0( const Node* A, const Node* B )
+void Graph::sortNodesByX1()
 {
-    if ( A->y[0] < B->y[0] )
+    map<int, Node *>::iterator itN;
+    map<int, vector<Node *> >::iterator itN2;
+    for ( itN = nodesMap.begin() ; itN != nodesMap.end() ; itN++ )
     {
-        return true;
+        Node *node = (*itN).second;
+        itN2 = X1_SortedNodeMap.find(node->x[1]);
+        if(itN2 == X1_SortedNodeMap.end())
+        {
+            vector<Node *> tempvector;
+            tempvector.push_back(node);
+            X1_SortedNodeMap[node->x[1]] = tempvector;
+        }
+        else
+        {
+            X1_SortedNodeMap[node->x[1]].push_back(node);
+        }
     }
-    else
+    DEBUG_MSG("sort by X1, and there are "<< X1_SortedNodeMap.size() <<" different X1.\n");
+    for ( itN2 = X1_SortedNodeMap.begin() ; itN2 != X1_SortedNodeMap.end() ; itN2++ )
     {
-        return false;
+        vector<Node *> tempvector = (*itN2).second;
+        DEBUG_MSG("X1="<< (*itN2).first <<endl);
+        for(int i=0 ; i < tempvector.size() ; i++)
+        {
+            DEBUG_MSG("\tnode"<<tempvector[i]->id<<endl);
+        }
     }
 }
 
 void Graph::sortNodesByY0()
 {
-    sort(nodes.begin(), nodes.end(), NodeCompByY0);
-    for ( int i=0 ; i < nodes.size() ; i++ )
+    map<int, Node *>::iterator itN;
+    map<int, vector<Node *> >::iterator itN2;
+    for ( itN = nodesMap.begin() ; itN != nodesMap.end() ; itN++ )
     {
-        Y_SortedNodeList.push_back(nodes[i]->id);
+        Node *node = (*itN).second;
+        itN2 = Y0_SortedNodeMap.find(node->y[0]);
+        if(itN2 == Y0_SortedNodeMap.end())
+        {
+            vector<Node *> tempvector;
+            tempvector.push_back(node);
+            Y0_SortedNodeMap[node->y[0]] = tempvector;
+        }
+        else
+        {
+            Y0_SortedNodeMap[node->y[0]].push_back(node);
+        }
+    }
+    DEBUG_MSG("sort by Y0, and there are "<< Y0_SortedNodeMap.size() <<" different Y0.\n");
+    for ( itN2 = Y0_SortedNodeMap.begin() ; itN2 != Y0_SortedNodeMap.end() ; itN2++ )
+    {
+        vector<Node *> tempvector = (*itN2).second;
+        DEBUG_MSG("Y0="<< (*itN2).first <<endl);
+        for(int i=0 ; i < tempvector.size() ; i++)
+        {
+            DEBUG_MSG("\tnode"<<tempvector[i]->id<<endl);
+        }
+    }
+}
+
+void Graph::sortNodesByY1()
+{
+    map<int, Node *>::iterator itN;
+    map<int, vector<Node *> >::iterator itN2;
+    for ( itN = nodesMap.begin() ; itN != nodesMap.end() ; itN++ )
+    {
+        Node *node = (*itN).second;
+        itN2 = Y1_SortedNodeMap.find(node->y[1]);
+        if(itN2 == Y1_SortedNodeMap.end())
+        {
+            vector<Node *> tempvector;
+            tempvector.push_back(node);
+            Y1_SortedNodeMap[node->y[1]] = tempvector;
+        }
+        else
+        {
+            Y1_SortedNodeMap[node->y[1]].push_back(node);
+        }
+    }
+    DEBUG_MSG("sort by Y1, and there are "<< Y1_SortedNodeMap.size() <<" different Y1.\n");
+    for ( itN2 = Y1_SortedNodeMap.begin() ; itN2 != Y1_SortedNodeMap.end() ; itN2++ )
+    {
+        vector<Node *> tempvector = (*itN2).second;
+        DEBUG_MSG("Y1="<< (*itN2).first <<endl);
+        for(int i=0 ; i < tempvector.size() ; i++)
+        {
+            DEBUG_MSG("\tnode"<<tempvector[i]->id<<endl);
+        }
     }
 }
 
@@ -516,30 +598,81 @@ void Graph::Build_Color_Graph()
 {
     cout << "Building graph ..." << endl;
     sortNodesByID();
+    sortNodesByX0();
+    sortNodesByX1();
+    sortNodesByY0();
+    sortNodesByY1();
+
     for(int i = 0; i < nodes.size(); i++)
     {
-        for(int j = i+1;j<nodes.size();j++)
+        DEBUG_MSG("node"<<i<<" ,x0="<<nodes[i]->x[0]<<endl);
+        map<int, vector<Node *> >::iterator itN2;
+        map<int, vector<Node *> >::iterator itN3;
+        
+        //processing x0
         {
-            int ax1 = nodes[i]->x[0];
-            int ax2 = nodes[i]->x[1];
-            int ay1 = nodes[i]->y[0];
-            int ay2 = nodes[i]->y[1];
-            int bx1 = nodes[j]->x[0];
-            int bx2 = nodes[j]->x[1];
-            int by1 = nodes[j]->y[0];
-            int by2 = nodes[j]->y[1];
-            if( ( bx1 <= ax1 && bx2 > ax1 ) || ( bx2 >= ax2 && bx1 < ax2) || ( bx1 >= ax1 && bx2 <= ax2 ))
+            itN2 = X1_SortedNodeMap.find(nodes[i]->x[0]-alpha);
+            itN3 = X1_SortedNodeMap.find(nodes[i]->x[0]);
+            if( itN2 == X1_SortedNodeMap.end() )
             {
-                if( ( by2 < ay1 && by2 > (ay1-beta) ) || ( by1 > ay2 && by1 < (ay2+beta) ) )
+                vector<Node *> dummyvector;
+                X1_SortedNodeMap[nodes[i]->x[0]-alpha]=dummyvector;
+                itN2 = X1_SortedNodeMap.find(nodes[i]->x[0]-alpha);
+            }
+            if( itN3 == X1_SortedNodeMap.end() )
+            {
+                vector<Node *> dummyvector;
+                X1_SortedNodeMap[nodes[i]->x[0]]=dummyvector;
+                itN3 = X1_SortedNodeMap.find(nodes[i]->x[0]);
+            }
+            DEBUG_MSG("  "<<(*itN2).first<<endl);
+            itN2++; // don't want to find the x[0]-alpha
+            itN3++; // check until nodes[i]->x[0]
+            for( itN2 ; itN2 != itN3 ; itN2++ )
+            {
+                DEBUG_MSG("  "<<(*itN2).first<<endl);
+                vector<Node *> tempvector = (*itN2).second;
+                for(int j = 0 ; j < tempvector.size() ; j++)
                 {
-                    addEdge(i,j,1);
+                    DEBUG_MSG("    proccessing node"<<nodes[i]->id<<" and node"<<tempvector[j]->id<<endl);
+                    if (!( tempvector[j]->y[0] >= nodes[i]->y[1] || tempvector[j]->y[1] <= nodes[i]->y[0] ))
+                    {
+                        addEdge(nodes[i]->id,tempvector[j]->id,1);
+                    }
                 }
             }
-            if( ( by1 <= ay1 && by2 > ay1 ) || ( by2 >= ay2 && by1 < ay2) || ( by1 >= ay1 && by2 <= ay2 ))
+        }
+
+        //processing y0
+        {
+            itN2 = Y1_SortedNodeMap.find(nodes[i]->y[0]-beta);
+            itN3 = Y1_SortedNodeMap.find(nodes[i]->y[0]);
+            if( itN2 == Y1_SortedNodeMap.end() )
             {
-                if( ( bx2 < ax1 && bx2 > (ax1-alpha) ) || ( bx1 > ax2 && bx1 < (ax2+alpha) ) )
+                vector<Node *> dummyvector;
+                Y1_SortedNodeMap[nodes[i]->y[0]-beta]=dummyvector;
+                itN2 = Y1_SortedNodeMap.find(nodes[i]->y[0]-beta);
+            }
+            if( itN3 == Y1_SortedNodeMap.end() )
+            {
+                vector<Node *> dummyvector;
+                Y1_SortedNodeMap[nodes[i]->y[0]]=dummyvector;
+                itN3 = Y1_SortedNodeMap.find(nodes[i]->y[0]);
+            }
+            DEBUG_MSG("  "<<(*itN2).first<<endl);
+            itN2++; // don't want to find the y[0]-beta
+            itN3++; // check until nodes[i]->y[0]
+            for( itN2 ; itN2 != itN3 ; itN2++ )
+            {
+                DEBUG_MSG("  "<<(*itN2).first<<endl);
+                vector<Node *> tempvector = (*itN2).second;
+                for(int j = 0 ; j < tempvector.size() ; j++)
                 {
-                    addEdge(i,j,1);
+                    DEBUG_MSG("    proccessing node"<<nodes[i]->id<<" and node"<<tempvector[j]->id<<endl);
+                    if (!( tempvector[j]->x[0] >= nodes[i]->x[1] || tempvector[j]->x[1] <= nodes[i]->x[0] ))
+                    {
+                        addEdge(nodes[i]->id,tempvector[j]->id,1);
+                    }
                 }
             }
         }

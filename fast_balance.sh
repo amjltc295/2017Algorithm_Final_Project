@@ -3,6 +3,8 @@
 
 echo fast plot script
 
+./bin/DPT_balance_color inputs/case0.in outputs/case0.out
+
 number=(1 2 3 4 5)
 
 for num in ${number[@]};do

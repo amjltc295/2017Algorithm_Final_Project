@@ -110,8 +110,10 @@ class Graph{
         void sortEdgesByWeight();
         void sortNodesByDegree();
         void sortNodesByID();
-        void sortNodesByX0(); // sort nodes by x0 and store the order in X_SortedNodeList
-        void sortNodesByY0(); // sort nodes by y0 and store the order in Y_SortedNodeList
+        void sortNodesByX0(); // sort nodes by x0 and store the order in X0_SortedNodeMap
+        void sortNodesByX1(); // sort nodes by x1 and store the order in X1_SortedNodeMap
+        void sortNodesByY0(); // sort nodes by y0 and store the order in Y0_SortedNodeList
+        void sortNodesByY1(); // sort nodes by y1 and store the order in Y1_SortedNodeList
         void init();
         Node * getNodeById(const int& id);
 
@@ -131,8 +133,10 @@ class Graph{
         vector<Node *> nodes;
         vector<Edge *> edges;
         vector<Window *> windows;
-        vector<int> X_SortedNodeList; // list contain the ids of nodes sorted by x0 (left x)
-        vector<int> Y_SortedNodeList; // list contain the ids of nodes sorted by y0 (down y)
+        map<int, vector<Node *> > X0_SortedNodeMap; // map contain the ids of nodes sorted by x0 (left x)
+        map<int, vector<Node *> > X1_SortedNodeMap; // map contain the ids of nodes sorted by x1 (right x)
+        map<int, vector<Node *> > Y0_SortedNodeMap; // map contain the ids of nodes sorted by y0 (down y)
+        map<int, vector<Node *> > Y1_SortedNodeMap; // map contain the ids of nodes sorted by y1 (up y)
         vector<SubGraph *> wholeSubGraph;
         vector<SubGraph *> non2ColorableSubGraph;
         int alpha;
