@@ -30,6 +30,7 @@ src/                        Main source file
 Makefile                    Makefile for all
 README.md                   Readme file
 fast_balance.sh             Shell to run all test cases for Linux
+evaluate.py                 Evalate the final score (provided by TA)
 
 ```
 
