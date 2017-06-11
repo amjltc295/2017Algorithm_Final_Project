@@ -449,37 +449,6 @@ void Graph::sortNodesByID()
     sort(nodes.begin(), nodes.end(), NodeCompByID);
 }
 
-void Graph::sortNodesByX0()
-{
-    map<int, Node *>::iterator itN;
-    map<int, vector<Node *> >::iterator itN2;
-    for ( itN = nodesMap.begin() ; itN != nodesMap.end() ; itN++ )
-    {
-        Node *node = (*itN).second;
-        itN2 = X0_SortedNodeMap.find(node->x[0]);
-        if(itN2 == X0_SortedNodeMap.end())
-        {
-            vector<Node *> tempvector;
-            tempvector.push_back(node);
-            X0_SortedNodeMap[node->x[0]] = tempvector;
-        }
-        else
-        {
-            X0_SortedNodeMap[node->x[0]].push_back(node);
-        }
-    }
-    DEBUG_MSG("sort by X0, and there are "<< X0_SortedNodeMap.size() <<" different X0.\n");
-    for ( itN2 = X0_SortedNodeMap.begin() ; itN2 != X0_SortedNodeMap.end() ; itN2++ )
-    {
-        vector<Node *> tempvector = (*itN2).second;
-        DEBUG_MSG("X0="<< (*itN2).first <<endl);
-        for(int i=0 ; i < tempvector.size() ; i++)
-        {
-            DEBUG_MSG("\tnode"<<tempvector[i]->id<<endl);
-        }
-    }
-}
-
 void Graph::sortNodesByX1()
 {
     map<int, Node *>::iterator itN;
@@ -504,37 +473,6 @@ void Graph::sortNodesByX1()
     {
         vector<Node *> tempvector = (*itN2).second;
         DEBUG_MSG("X1="<< (*itN2).first <<endl);
-        for(int i=0 ; i < tempvector.size() ; i++)
-        {
-            DEBUG_MSG("\tnode"<<tempvector[i]->id<<endl);
-        }
-    }
-}
-
-void Graph::sortNodesByY0()
-{
-    map<int, Node *>::iterator itN;
-    map<int, vector<Node *> >::iterator itN2;
-    for ( itN = nodesMap.begin() ; itN != nodesMap.end() ; itN++ )
-    {
-        Node *node = (*itN).second;
-        itN2 = Y0_SortedNodeMap.find(node->y[0]);
-        if(itN2 == Y0_SortedNodeMap.end())
-        {
-            vector<Node *> tempvector;
-            tempvector.push_back(node);
-            Y0_SortedNodeMap[node->y[0]] = tempvector;
-        }
-        else
-        {
-            Y0_SortedNodeMap[node->y[0]].push_back(node);
-        }
-    }
-    DEBUG_MSG("sort by Y0, and there are "<< Y0_SortedNodeMap.size() <<" different Y0.\n");
-    for ( itN2 = Y0_SortedNodeMap.begin() ; itN2 != Y0_SortedNodeMap.end() ; itN2++ )
-    {
-        vector<Node *> tempvector = (*itN2).second;
-        DEBUG_MSG("Y0="<< (*itN2).first <<endl);
         for(int i=0 ; i < tempvector.size() ; i++)
         {
             DEBUG_MSG("\tnode"<<tempvector[i]->id<<endl);
@@ -598,9 +536,7 @@ void Graph::Build_Color_Graph()
 {
     cout << "Building graph ..." << endl;
     sortNodesByID();
-    sortNodesByX0();
     sortNodesByX1();
-    sortNodesByY0();
     sortNodesByY1();
 
     for(int i = 0; i < nodes.size(); i++)

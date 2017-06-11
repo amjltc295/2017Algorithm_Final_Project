@@ -85,6 +85,9 @@ int main(int argc, char* argv[])
     tmusg.periodStart();
     graphPtr->Build_Color_Graph();
     graphPtr->DFS();
+    // #ifdef DEBUG
+    // Output_Graph(graphPtr,argv[2]); // this line output the .dot file for checking the edges
+    // #endif
     #ifdef DEBUG
     graphPtr->printGraph();
     #endif
