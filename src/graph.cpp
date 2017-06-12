@@ -396,6 +396,7 @@ void Graph::output_unbalanced_color_graph(char * filepath)
     {
         fout << windows[i]->leftX << ',' << windows[i]->downY << ',' << windows[i]->rightX << ',' << windows[i]->upY <<endl;
     }
+    DEBUG_MSG("Written debug output to " << filepath);
 }
     
 void Graph::sortEdgesOfNode()
@@ -468,14 +469,14 @@ void Graph::sortNodesByX1()
             X1_SortedNodeMap[node->x[1]].push_back(node);
         }
     }
-    DEBUG_MSG("sort by X1, and there are "<< X1_SortedNodeMap.size() <<" different X1.\n");
+    DEBUG_MSG("sort by X1, and there are "<< X1_SortedNodeMap.size() << " different X1.\n");
     for ( itN2 = X1_SortedNodeMap.begin() ; itN2 != X1_SortedNodeMap.end() ; itN2++ )
     {
         vector<Node *> tempvector = (*itN2).second;
         DEBUG_MSG("X1="<< (*itN2).first <<endl);
         for(int i=0 ; i < tempvector.size() ; i++)
         {
-            DEBUG_MSG("\tnode"<<tempvector[i]->id<<endl);
+            DEBUG_MSG("\tnode" << tempvector[i]->id << endl);
         }
     }
 }
@@ -499,14 +500,14 @@ void Graph::sortNodesByY1()
             Y1_SortedNodeMap[node->y[1]].push_back(node);
         }
     }
-    DEBUG_MSG("sort by Y1, and there are "<< Y1_SortedNodeMap.size() <<" different Y1.\n");
+    DEBUG_MSG("sort by Y1, and there are "<< Y1_SortedNodeMap.size() << " different Y1.\n");
     for ( itN2 = Y1_SortedNodeMap.begin() ; itN2 != Y1_SortedNodeMap.end() ; itN2++ )
     {
         vector<Node *> tempvector = (*itN2).second;
         DEBUG_MSG("Y1="<< (*itN2).first <<endl);
         for(int i=0 ; i < tempvector.size() ; i++)
         {
-            DEBUG_MSG("\tnode"<<tempvector[i]->id<<endl);
+            DEBUG_MSG("\tnode" << tempvector[i]->id << endl);
         }
     }
 }
@@ -541,39 +542,39 @@ void Graph::Build_Color_Graph()
 
     for(int i = 0; i < nodes.size(); i++)
     {
-        DEBUG_MSG("node"<<i<<" ,x0="<<nodes[i]->x[0]<<endl);
+        DEBUG_MSG("\tnode" << i << " ,x0=" << nodes[i]->x[0] << endl);
         map<int, vector<Node *> >::iterator itN2;
         map<int, vector<Node *> >::iterator itN3;
         
         //processing x0
         {
-            itN2 = X1_SortedNodeMap.find(nodes[i]->x[0]-alpha);
+            itN2 = X1_SortedNodeMap.find(nodes[i]->x[0] - alpha);
             itN3 = X1_SortedNodeMap.find(nodes[i]->x[0]);
             if( itN2 == X1_SortedNodeMap.end() )
             {
                 vector<Node *> dummyvector;
-                X1_SortedNodeMap[nodes[i]->x[0]-alpha]=dummyvector;
-                itN2 = X1_SortedNodeMap.find(nodes[i]->x[0]-alpha);
+                X1_SortedNodeMap[nodes[i]->x[0]-alpha] = dummyvector;
+                itN2 = X1_SortedNodeMap.find(nodes[i]->x[0] - alpha);
             }
             if( itN3 == X1_SortedNodeMap.end() )
             {
                 vector<Node *> dummyvector;
-                X1_SortedNodeMap[nodes[i]->x[0]]=dummyvector;
+                X1_SortedNodeMap[nodes[i]->x[0]] = dummyvector;
                 itN3 = X1_SortedNodeMap.find(nodes[i]->x[0]);
             }
-            DEBUG_MSG("  "<<(*itN2).first<<endl);
+            DEBUG_MSG("\t  " << (*itN2).first << endl);
             itN2++; // don't want to find the x[0]-alpha
             itN3++; // check until nodes[i]->x[0]
             for( itN2 ; itN2 != itN3 ; itN2++ )
             {
-                DEBUG_MSG("  "<<(*itN2).first<<endl);
+                DEBUG_MSG("\t\t  " << (*itN2).first << endl);
                 vector<Node *> tempvector = (*itN2).second;
                 for(int j = 0 ; j < tempvector.size() ; j++)
                 {
-                    DEBUG_MSG("    proccessing node"<<nodes[i]->id<<" and node"<<tempvector[j]->id<<endl);
+                    DEBUG_MSG("\t\t    proccessing node" << nodes[i]->id << " and node" << tempvector[j]->id << endl);
                     if (!( tempvector[j]->y[0] >= nodes[i]->y[1] || tempvector[j]->y[1] <= nodes[i]->y[0] ))
                     {
-                        addEdge(nodes[i]->id,tempvector[j]->id,1);
+                        addEdge(nodes[i]->id,tempvector[j]->id, 1);
                     }
                 }
             }
@@ -581,30 +582,30 @@ void Graph::Build_Color_Graph()
 
         //processing y0
         {
-            itN2 = Y1_SortedNodeMap.find(nodes[i]->y[0]-beta);
+            itN2 = Y1_SortedNodeMap.find(nodes[i]->y[0] - beta);
             itN3 = Y1_SortedNodeMap.find(nodes[i]->y[0]);
             if( itN2 == Y1_SortedNodeMap.end() )
             {
                 vector<Node *> dummyvector;
-                Y1_SortedNodeMap[nodes[i]->y[0]-beta]=dummyvector;
-                itN2 = Y1_SortedNodeMap.find(nodes[i]->y[0]-beta);
+                Y1_SortedNodeMap[nodes[i]->y[0] - beta] = dummyvector;
+                itN2 = Y1_SortedNodeMap.find(nodes[i]->y[0] - beta);
             }
             if( itN3 == Y1_SortedNodeMap.end() )
             {
                 vector<Node *> dummyvector;
-                Y1_SortedNodeMap[nodes[i]->y[0]]=dummyvector;
+                Y1_SortedNodeMap[nodes[i]->y[0]] = dummyvector;
                 itN3 = Y1_SortedNodeMap.find(nodes[i]->y[0]);
             }
-            DEBUG_MSG("  "<<(*itN2).first<<endl);
+            DEBUG_MSG("\t  " << (*itN2).first << endl);
             itN2++; // don't want to find the y[0]-beta
             itN3++; // check until nodes[i]->y[0]
             for( itN2 ; itN2 != itN3 ; itN2++ )
             {
-                DEBUG_MSG("  "<<(*itN2).first<<endl);
+                DEBUG_MSG("\t\t  " << (*itN2).first << endl);
                 vector<Node *> tempvector = (*itN2).second;
                 for(int j = 0 ; j < tempvector.size() ; j++)
                 {
-                    DEBUG_MSG("    proccessing node"<<nodes[i]->id<<" and node"<<tempvector[j]->id<<endl);
+                    DEBUG_MSG("\t\t    proccessing node" << nodes[i]->id << " and node" << tempvector[j]->id << endl);
                     if (!( tempvector[j]->x[0] >= nodes[i]->x[1] || tempvector[j]->x[1] <= nodes[i]->x[0] ))
                     {
                         addEdge(nodes[i]->id,tempvector[j]->id,1);
