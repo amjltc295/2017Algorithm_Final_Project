@@ -123,16 +123,18 @@ bool SubGraph::flipColor()
 
 //////////////////// Window Methods //////////////////////////
 
-Window::Window(const int& i, const int& x0, const int& x1, const int& y0, const int& y1)
+Window::Window(const int& i, const int& x0, const int& x1, const int& y0, const int& y1, Graph * g)
 {
     index = i;
     leftX = x0;
     rightX = x1;
     downY = y0;
     upY = y1;
+    recursiveTime = 0;
     color_diff_sum = 0;
     color_A_density = 0;
     color_B_density = 0;
+    gPtr = g;
 }
 
 //Add subgraph (a node set) to the window and calculate its colorDiff
@@ -261,13 +263,16 @@ struct subGraphCompByColorDiff {
  *         
  *
  */
-void Window::greedyForColorBalancing() {
+int Window::greedyForColorBalancing() {
+    recursiveTime += 1;
+    if (recursiveTime > 2)
+        return 0;
     DEBUG_MSG("\tWindow " << index << " greedy" << endl);
     DEBUG_MSG(" \tid "  << setw(8)  << "Area "  << " colored" << endl);
     vector<SubGraph *> color_diff_list;
-    //int color_diff_sum = 0;
     color_diff_sum = 0;
     map<int, SubGraph *>::iterator subGraph_iter;
+    map<int, int>::iterator winId_iter;
     //Create color_diff_list excluding colored ones
     //Also sum the colorDiff of colored ones
     int count = 1;
@@ -275,10 +280,17 @@ void Window::greedyForColorBalancing() {
         DEBUG_MSG( "\t" << setw(3) << count++ << " " 
             << setw(8) << subGraph_iter->second-> colorDiff[index] <<  " " 
             << setw(6)<< subGraph_iter->second->colored << endl);
+        // Do not flip if colored by other window
         if (subGraph_iter->second->colored)
             color_diff_sum += subGraph_iter->second->colorDiff[index];
+        // Ignore if the subgraph area in this window is too small (cross-window optimization)
+        else if (subGraph_iter->second->maxAreaWindowIdAndArea.second * 0.1 > subGraph_iter->second->areaInEachWindow[index]) {
+            // color_diff_sum += subGraph_iter->second->colorDiff[index];
+            // Wait for other window to deal with
+            
+        }
+        //Flip the subGraph if its colorDiff is negative and it's not colored
         else {
-            //Flip the subGraph if its colorDiff is negative and it's not colored
             if (subGraph_iter->second->colorDiff[index] < 0) {
                 assert(subGraph_iter->second->flipColor());
             }
@@ -290,16 +302,35 @@ void Window::greedyForColorBalancing() {
     sort(color_diff_list.begin(), color_diff_list.end(), subGraphCompByColorDiff(index));
     
     
-    //for ( int i = 0; i < color_diff_list.size(); i++ ) {
-    for ( int j = 0; j < color_diff_list.size(); j++ ) {
-        //cout << j << " color_diff: " <<  color_diff_list[j]->colorDiff[index] << endl;
+    for ( int i = 0; i < color_diff_list.size(); i++ ) {
+        SubGraph * subGraphPtr = color_diff_list[i];
         if ( color_diff_sum > 0 ) {
-            assert(color_diff_list[j]->flipColor());
+            assert(subGraphPtr->flipColor());
         }
-        color_diff_sum += color_diff_list[j]->colorDiff[index];
+        color_diff_sum += subGraphPtr->colorDiff[index];
         //set subgraph colored
-        color_diff_list[j]->colored = true;
+        subGraphPtr->colored = true;
+
+        // Recursively optimize other window, but hard to control
+        /*
+        int subGraphInDiffWindowSize = subGraphPtr->areaInEachWindow.size();
+        if ( subGraphInDiffWindowSize > 1) {
+            assert(subGraphPtr->maxAreaWindowIdAndArea.first == index);
+            
+            for (winId_iter = subGraphPtr->areaInEachWindow.begin(); winId_iter != subGraphPtr->areaInEachWindow.end(); winId_iter++) {
+                int windowId = winId_iter->first;
+                // Deal with other window
+                if (windowId != index) {
+                    // gPtr->windowsMap[windowId]->color_diff_sum +=  subgraph area in that window
+                    if (gPtr->windowsMap[windowId]->greedyForColorBalancing())
+                        DEBUG_MSG( "\t Window " << windowId << " greedy again, for Window " << index << endl);
+                }
+            }
+        }
+        */
+        
     }
+    return recursiveTime; //Useless now
     //}
 }
 
@@ -768,7 +799,7 @@ void Graph::Build_Color_Density_Windows()
                 start_X=colorBoundBox[1]-omega;
             }
             Window *window;
-            window = new Window(i,start_X,start_X+omega,start_Y,start_Y+omega);
+            window = new Window(i,start_X,start_X+omega,start_Y,start_Y+omega, this);
             windowsMap[i] = window;
             windows.push_back(window);
 

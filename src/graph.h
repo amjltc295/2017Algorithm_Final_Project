@@ -67,7 +67,7 @@ public:
     
     void IsColflict(); // when doing DFS and find out there are color conflict, set paintConflict=True for all nodes in this subgraph.
     map<int, int> colorDiff; // this means that the color diffetence for different windows. < window->index , colorDiff >. and colordiff is RED-GREEN.
-    map<int, int> areaInEachWindow;
+    map<int, int> areaInEachWindow; // <window->index, area in that window>
     bool colored; // if colored == true , we should filp the subgraph in the next window
     int totalArea;
     pair<int, int> maxAreaWindowIdAndArea; 
@@ -82,20 +82,22 @@ public:
 class Window
 {
 public:
-    Window(const int& i, const int& x0, const int& x1, const int& y0, const int& y1);
+    Window(const int& i, const int& x0, const int& x1, const int& y0, const int& y1, Graph* g);
     ~Window();
     void addSubGraph(Graph *graph);
     int AreaInTheWindow(Node *u); //return the area of node u in this window.
     void calculateColorDensity();
 //    bool subGraphCompByColorDiff(const SubGraph *A, const SubGraph *B);
-    void greedyForColorBalancing();
+    int greedyForColorBalancing();
 
     int index;
     int leftX, rightX;
     int upY, downY;
+    int recursiveTime; // For cross-window optimization
     int color_diff_sum;
     float color_A_density; //A is Red
     float color_B_density; //B is Green
+    Graph * gPtr; // To trace other window for cross-window optimization
     map<int, SubGraph *> subGraphSet; // contain all the subgraph in one window.
 };
 

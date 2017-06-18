@@ -30,6 +30,7 @@ src/                        Main source file
 Makefile                    Makefile for all
 README.md                   Readme file
 fast_balance.sh             Shell to run all test cases for Linux
+fast_evaluate.py            Shell to evaluate all outputs
 evaluate.py                 Evalate the final score (provided by TA)
 
 ```
@@ -78,7 +79,7 @@ For each window
 ```
 Greedy // Window::greedyForColorBalancing()
 ```
-Let (list of subgraphs in this window for colorDiff comparison, excluding colored ones) be color_diff_list
+Let (list of subgraphs in this window for colorDiff comparison, excluding colored ones and too few area in windown ones) be color_diff_list
 Flip all subGraph with negative colorDiff in color_diff_list
 Sort the color_diff_list
 Let (total color difference in this window) be color_diff_sum
