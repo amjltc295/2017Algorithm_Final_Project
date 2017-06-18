@@ -2,8 +2,6 @@
 
 ## Synopsis
 
-~~At the top of the file there should be a short introduction and/ or overview that explains **what** the project is. This description should match descriptions added for package managers (Gemspec, package.json, etc.)~~
-
 NTUEE Algorithm 2017 Final Project
 
 [ICCAD 2015 Contest - Color Balancing for Double Patterning](http://cad-contest.el.cycu.edu.tw/problem_E/default.htm)
@@ -98,13 +96,11 @@ For i = each_fixed_index to color_diff_list.size:
 ```
 git clone https://github.com/amjltc295/2017Algorithm_Final_Project.git directory_name
 cd directory_name
+//Release version
 make
-./DPT_balance_color ($input_file_name) ($input_file_name).out
+//Debug version
+make debug
 ```
-
-## API Reference
-
-~~Depending on the size of the project, if it is small and simple enough the reference docs can be added to the README. For medium size to larger projects it is important to at least provide a link to where the API reference docs live.~~
 
 ## Tests
 
@@ -112,18 +108,20 @@ For Linux
 ```
 // Indivisual case
 ./DPT_balance_color ($input_file_name) ($input_file_name).out
-// To run all test cases
+// To run all test cases (debug mode invalid)
 bash fast_balance.sh
-// To see the result plots
+// To evaluate all outputs
+bash fast_evaluate.py
+// To see the result plots (debug mode only)
 bash plot_test_case/fast_balance_plot.sh
 ```
-~~Describe and show how to run the tests with code examples.~~
 
 ## Contributors
 
 Ya-Liang Chang [amjltc295] (https://github.com/amjltc295)
 
 Benjamin Kao [kaoben2731] (https://github.com/kaoben2731)
+
 
 
 ## License
