@@ -116,11 +116,25 @@ bash fast_evaluate.py
 bash plot_test_case/fast_balance_plot.sh
 ```
 
+## Performance
+```
+                 Case        TOP1    Ours
+iccad2015_input.case1       99.46   99.46
+iccad2015_input.case2       95.07   91.9          
+iccad2015_input.case3       91.28   85.25
+iccad2015_input.case4       99.78   99.63
+iccad2015_input.case5       99.77   99.29
+iccad2015_input.case6       99.76   Unknown
+iccad2015_input.case7       91.79   Unknown
+```
+
 ## Contributors
 
 Ya-Liang Chang [amjltc295] (https://github.com/amjltc295)
 
 Benjamin Kao [kaoben2731] (https://github.com/kaoben2731)
+
+Albert Tong [albert18711] (https://github.com/albert18711)
 
 
 
