@@ -133,11 +133,11 @@ iccad2015_input.case7       91.79   Unknown
 
 ## Contributors
 
-Ya-Liang Chang [amjltc295] (https://github.com/amjltc295)
+Ya-Liang Chang [amjltc295](https://github.com/amjltc295)
 
-Benjamin Kao [kaoben2731] (https://github.com/kaoben2731)
+Benjamin Kao [kaoben2731](https://github.com/kaoben2731)
 
-Albert Tong [albert18711] (https://github.com/albert18711)
+Albert Tong [albert18711](https://github.com/albert18711)
 
 
 
