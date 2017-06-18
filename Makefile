@@ -16,3 +16,8 @@ clean :
 	cd ../src; \
 	make clean
 
+Windows :
+	cd lib /
+	make /
+	cd ..\src /
+	make /
