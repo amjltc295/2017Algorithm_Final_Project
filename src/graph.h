@@ -55,6 +55,7 @@ class Node{
         int d;
         Node *prev;
         int heap_idx;
+        int area;
 };
 
 
@@ -65,8 +66,11 @@ public:
     ~SubGraph();
     
     void IsColflict(); // when doing DFS and find out there are color conflict, set paintConflict=True for all nodes in this subgraph.
-    map<int ,int> colorDiff; // this means that the color diffetence for different windows. < window->index , colorDiff >. and colordiff is RED-GREEN.
+    map<int, int> colorDiff; // this means that the color diffetence for different windows. < window->index , colorDiff >. and colordiff is RED-GREEN.
+    map<int, int> areaInEachWindow;
     bool colored; // if colored == true , we should filp the subgraph in the next window
+    int totalArea;
+    pair<int, int> maxAreaWindowIdAndArea; 
     vector<Node *> subGraphNodes;
     bool flipColor();
 

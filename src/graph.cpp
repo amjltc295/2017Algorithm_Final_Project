@@ -51,6 +51,7 @@ Node::Node(const int& i, const int& x0, const int& y0, const int& x1, const int&
     y[0] = y0;
     x[1] = x1;
     y[1] = y1;
+    area = (x[1]-x[0]) * (y[1]-y[0]);
     paintConflict = false; // valid = 1 means this subgraph is colorable
     inColorDensityWindow = false;
     color = WHITE;
@@ -80,6 +81,10 @@ void Node::sortEdge()
 SubGraph::SubGraph()
 {
     colored = false;
+    totalArea = 0;
+    maxAreaWindowIdAndArea.first = 0;
+    maxAreaWindowIdAndArea.second = 0;
+
 }
 
 void SubGraph::IsColflict()
@@ -134,43 +139,51 @@ Window::Window(const int& i, const int& x0, const int& x1, const int& y0, const 
 void Window::addSubGraph(Graph *graph)
 {
     int k=0; // just a index of subGraphSet.
+    // For each subgraph in the Graph
     for ( int i = 0 ; i < graph->wholeSubGraph.size() ; i++ )
     {
+
+        int subgraphTotalArea = 0;
+        int total_red_area = 0; 
+        int total_green_area = 0;
+        bool subGraphInWindow = false;
+
+        // For each node in the subgraph
         for ( int j = 0 ; j < graph->wholeSubGraph[i]->subGraphNodes.size() ; j++ )
         {
-            //used to check every node in this subgraph is in this window or not
+            // Used to check every node in this subgraph is in this window or not
             Node *thisnode = graph->wholeSubGraph[i]->subGraphNodes[j];
-
-            //check if this node is 2-colorable
-            if ( ! ( thisnode->paintConflict ) ) 
-            {
-                //check if this node is in this window
-                if ( ! ( thisnode->x[0] >= rightX || thisnode->x[1] <= leftX ) ) 
-                {
-                    if ( ! ( thisnode->y[0] >= upY || thisnode->y[1] <= downY ) )
-                    {
-                        //Add the subgraph into the subGraphSet of this window.
-                        subGraphSet[k] = graph->wholeSubGraph[i]; 
-                        // calculate the color difference "in this window", and store it into the subgraph's colorDiff
-                        int total_red_area = 0; 
-                        int total_green_area = 0;
-                        for( int l = 0 ; l < subGraphSet[k]->subGraphNodes.size() ; l++ )
-                        {
-                            if ( subGraphSet[k]->subGraphNodes[l]->paintColor == RED )
-                            {
-                                total_red_area += AreaInTheWindow(subGraphSet[k]->subGraphNodes[l]);
-                            }
-                            else
-                            {
-                                total_green_area += AreaInTheWindow(subGraphSet[k]->subGraphNodes[l]);   
-                            }
-                        }
-                        subGraphSet[k]->colorDiff[index] = ( total_red_area - total_green_area );
-                        k++;
-                        break;
-                    }
+            subgraphTotalArea += thisnode->area;
+            // Check if this node is 2-colorable
+            if (thisnode->paintConflict){
+                assert(j==0);
+                break;
+            }
+            // Check if this node is in this window
+            if ( ! ( thisnode->x[0] >= rightX || thisnode->x[1] <= leftX ) ) {
+                if ( ! ( thisnode->y[0] >= upY || thisnode->y[1] <= downY ) ) {
+                    subGraphInWindow = true;
                 }
             }
+            // Calculate area in this window for color_diff
+            if ( thisnode->paintColor == RED ){
+                total_red_area += AreaInTheWindow(thisnode);
+            } else {
+                total_green_area += AreaInTheWindow(thisnode);   
+            }
+        }
+        if (subGraphInWindow) {
+            // Add the subgraph into the subGraphSet of this window.
+            subGraphSet[k] = graph->wholeSubGraph[i]; 
+            subGraphSet[k]->colorDiff[index] = ( total_red_area - total_green_area );
+            int subGraphAreaInThisWindow = total_red_area + total_green_area;
+            subGraphSet[k]->areaInEachWindow[index] = subGraphAreaInThisWindow;
+            // Update where the subgraph mainly exists
+            if (subGraphAreaInThisWindow > subGraphSet[k]->maxAreaWindowIdAndArea.second) {
+                pair<int, int> maxWindow(index, subGraphAreaInThisWindow);
+                subGraphSet[k]->maxAreaWindowIdAndArea = maxWindow;
+            }
+            k++;
         }
     }
 }
