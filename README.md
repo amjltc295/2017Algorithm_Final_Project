@@ -125,9 +125,9 @@ bash plot_test_case/fast_balance_plot.sh
                  Case        TOP1    Ours
 iccad2015_input.case1       99.46   99.46
 iccad2015_input.case2       95.07   91.9          
-iccad2015_input.case3       91.28   85.25
+iccad2015_input.case3       91.28   85.10
 iccad2015_input.case4       99.78   99.63
-iccad2015_input.case5       99.77   99.29
+iccad2015_input.case5       99.77   99.42
 iccad2015_input.case6       99.76   Unknown
 iccad2015_input.case7       91.79   Unknown
 ```
