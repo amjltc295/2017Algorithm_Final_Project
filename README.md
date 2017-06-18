@@ -8,6 +8,10 @@ NTUEE Algorithm 2017 Final Project
 
 Build a graph and see if it's 2-colorable. Try to balance the two color in a color window.
 
+We design a specific greedy algorithm to balance the color in O(nlgn), and it guaratees the color difference would get smaller gradually.
+
+Yet we do little things for cross-window optimization, so in some cases the performance is worse than TOP 10 group in the contest.
+
 ## Directories & Files
 
 ```
