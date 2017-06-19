@@ -1,6 +1,6 @@
 // **************************************************************************
 //  File       [main.cpp]
-//  Author     [, Albert Tong, Benjamin Kao]
+//  Author     [Ya-Liang Chang, Albert Tong, Benjamin Kao]
 //  Synopsis   [The main program of 2017 Spring Algorithm Group 3 Final Project]
 //  Modify     [2017/06/19 Benjamin Kao]
 // **************************************************************************
