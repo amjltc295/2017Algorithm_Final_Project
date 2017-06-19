@@ -1,11 +1,11 @@
 #!/bin/bash
 
-echo fast evaluate
+echo fast evaluate the output files
 
-python evaluate.py outputs/case0.out
-
-number=(1 2 3 4 5)
+number=(0 1 2 3 4 5)
 
 for num in ${number[@]};do
+	echo
+	echo evaluating case$num
 	python2 evaluate.py outputs/case$num.out
 done

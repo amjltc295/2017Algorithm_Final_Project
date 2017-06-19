@@ -1,8 +1,8 @@
 // **************************************************************************
 //  File       [main.cpp]
-//  Author     [Yu-Hao Ho]
-//  Synopsis   [The main program of 2015 Spring Algorithm PA2]
-//  Modify     [2015/03/20 Yu-Hao Ho]
+//  Author     [, Albert Tong, Benjamin Kao]
+//  Synopsis   [The main program of 2017 Spring Algorithm Group 3 Final Project]
+//  Modify     [2017/06/19 Benjamin Kao]
 // **************************************************************************
 
 #include <stdlib.h>
@@ -12,7 +12,6 @@
 #include <fstream>
 #include "../lib/tm_usage.h"
 #include "graph.h"
-//#include "color_balance_greedy.h"
 
 
 using namespace std;
@@ -33,7 +32,6 @@ int main(int argc, char* argv[])
     CommonNs::TmStat stat;
 
     //////////// read the input file /////////////
-    //WorkerAnt workerAntSolver;
 
     char buffer[200];
     fstream fin(argv[1]);
@@ -82,6 +80,8 @@ int main(int argc, char* argv[])
     }
     ////////// End of read file /////////
 
+
+    ////////// do color balancing /////////
     tmusg.periodStart();
     graphPtr->Build_Color_Graph();
     graphPtr->DFS();
@@ -100,20 +100,10 @@ int main(int argc, char* argv[])
     graphPtr->output_unbalanced_color_graph(argv[2]);
     #endif
 
-    //do color balancing
 
     tmusg.getPeriodUsage(stat);
 
-    //////////// write the output file ///////////
-    /*
-    vector<int> foodIDList = workerAntSolver.getFoodIDList();
-    for (int i=0; i<foodIDList.size(); i++) {
-        fout << foodIDList[i] << endl;
-    }
-    fout << workerAntSolver.getTotalDistance() << endl;
-    */
     fin.close();
-    //fout.close();
 
     cout << endl;
     cout <<"# run time = " << (stat.uTime + stat.sTime) / 1000000.0 << "sec" << endl;

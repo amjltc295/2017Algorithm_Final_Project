@@ -862,8 +862,9 @@ void Graph::Balance_Color()
         //Do Greedy to balance
         windowPtr->greedyForColorBalancing();
         DEBUG_MSG("\tWindow " << windowPtr->index << " color_diff_sum: " << windowPtr->color_diff_sum << endl);
-
     }
+
+    
     /*
     map<int, Node *>::iterator node_iter;
     for (node_iter = nodesMap.begin(); node_iter != nodesMap.end(); node_iter++) {
